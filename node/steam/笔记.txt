@@ -1,0 +1,32 @@
+流
+
+流是一种数据存储手段，是有起点和终点的
+流是一组有序的，有起点和终点的字节数据传输手段
+它不关心文件的整体内容，只关注是否从文件中读取了数据，以及读取到数据之后的处理
+流是一个抽象接口，被node中很多对象所实现，比如http中req, res对象都是流
+gulp
+webpack 
+压缩 
+zipto
+
+孩子吃饭 只管张嘴，不会管饭从哪来 还剩多少 
+
+可读流
+
+
+nodejs中流有四种
+readable 可读流  例: fs.createReadStream()
+writable 可写流  例: fs.createWriteStream()
+duplex 双工流， 可读写的流 例: net.Socket()
+transform 在读写过程中可以修改和变换数据的Duplex流 例:zlib.createDeflate()
+
+流中数据有两种模式，二进制模式，对象模式
+二进制模式: 每个分块都是buffer或者string对象
+对象模式: 流内部处理的是一系列普通对象
+所有使用nodejs API创建的流对象只能操作strings和buffer对象，但是，通过一些第三方留的实现，你依然可以处理其他类型的javascript类型的值
+(除了null, 他在流处理中有特殊意义)，再创建流的实例的时候，可以用过objectModel选项使流的实例切换到对象模式
+试图将已经存在的流切换到对象模式是不安全的
+
+gulp流是对象模式
+
+
