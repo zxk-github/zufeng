@@ -10,7 +10,7 @@ const ws = fs.createWriteStream('./demo1.txt', {
     autoClose: true // 设置为true之后，则在error或者finish事件时文件描述符会自动关闭
 })
 
-// 按理说返回了false就不应该写了，但是真的写了数据也不会丢失，会缓存在内存中，缓存区空之后，再写
+// 按理说返回了false就不应该写了，但是真的写了数据也不会丢失，会缓存在内存中，缓存区空之后，再从内存中读出
 
 // 当ws.write返回false，即暂存区满了之后，触发drain事件
 

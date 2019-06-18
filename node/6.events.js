@@ -11,7 +11,6 @@ EventEmit.prototype.on = EventEmit.prototype.addListener = function(type, listen
 }
 
 // 移除某个事件所有监听函数
-EventEmit.prototype.once
 
 EventEmit.prototype.once = function(type, listener) {
     // 用完立即销毁

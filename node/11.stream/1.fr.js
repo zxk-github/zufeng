@@ -3,7 +3,7 @@
 
 var fs = require('fs');
 
-var rs = fs.createReadStream('./1.txt', {
+var rs = fs.createReadStream('./demo1.txt', {
     highWaterMark: 3,
     flags: 'r',
     mode: 0x666,
@@ -12,12 +12,15 @@ var rs = fs.createReadStream('./1.txt', {
     end:8
 });
 
+rs.setEncoding('utf8')
+
 // 文件流 还会有打开和关闭
-rs.on('open', function() {
+rs.on('open', function() {  
     console.log('文件已经打开');
 })
 // 监听data事件
-// 当开始监听data事件的时候， 流就开始读取文件内容，缓存区满了之后就发射数据缓存区数据，然后清空缓存区， 然后继续读取文件触发data事件，循环进行直到结束
+// 当开始监听data事件的时候， 流就开始读取文件内容，缓存区满了之后就发射数据缓存区数据，
+// 然后清空缓存区， 然后继续读取文件触发data事件，循环进行直到结束
 
 // 缓存区就是一小块内存，读取内存中数据，要
 rs.on('data', function(data) {
@@ -27,12 +30,16 @@ rs.on('data', function(data) {
         rs.resume()// 恢复读取并触发data事件
     }, 2000)
 })
+// 当文件的读取速度超出消耗速度的时候，这时候就会出现数据读取冗余问题，数据会堆积在缓存区，为了防止这个情况的发生这时候就可以使用rs.pause()
+
+
 
 // 文件内容读取完了，触发end事件
 rs.on('end', function() {
     console.log('读取完毕')
 })
 
+// 文件读取错误会出发error事件
 rs.on('error', function() {
     console.log('error')
 })

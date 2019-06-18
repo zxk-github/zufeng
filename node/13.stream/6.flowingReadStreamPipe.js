@@ -61,10 +61,11 @@ class FlowingReadStream extends EventEmiter {
                 this.emit('data', data);
                 
                 if(this.end && this.pos > this.end) {
-                    
                     return this.endFn();
                 } else {
-                    this.read();
+                    if(this.flowing) {
+                        this.read();
+                    } 
                 }
             } else {
                 return this.endFn();
@@ -82,6 +83,28 @@ class FlowingReadStream extends EventEmiter {
         });
     }
 
-}
+    pipe(dest) {
+        this.on('data', data => {
+            let flag =  dest.write(data);
+            if(!flag) {
+                this.pause();
+            }
+        })
+
+        dest.on('drain', () => {
+            this.resume();
+        })
+    }
+    
+    // 暂停时就是关闭流动模式
+    pause() {
+        this.flowing = false;
+    }
+
+    resume() {
+        this.flowing = true;
+        this.read();
+    }
+}   
 
 module.exports = FlowingReadStream;

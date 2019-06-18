@@ -1,0 +1,20 @@
+nodejs有阶段的概念，不同任务在不同的阶段执行，在进入下一阶段之前执行process.nextTick和microtask
+
+时间循环必须跑完这六个阶段结算一个轮回
+
+没一个阶段都会有一个队列
+el进入一个阶段会执行里面的所有操作。然后执行回调函数，直到队列消耗殆尽，或毁掉函数数量达到最大限度
+清理nextTickQueue/microtask之后进入下一个阶段
+
+timerqueue setTimeout setInterval
+i/o queue 几乎所有的毁掉函数，除了timer closecallback check 阶段的回调
+check queue  setImmediate() 设定的回调函数
+close queue 比如socket.on('close', ...)
+
+timer
+这个阶段检查是否有达到阀值， 有就执行回调，但是因为node的调度机制，或者其他的回调函数，延迟函数的执行
+
+i/o callback
+i/o结束之后执行
+
+poll 阶段jiejie

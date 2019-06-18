@@ -1,0 +1,5 @@
+// 判断一个参数是否是字符串
+
+function isString(param) {
+    return Object.prototype.toString.call(param) === '[object String]'
+}

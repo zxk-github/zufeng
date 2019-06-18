@@ -1,13 +1,16 @@
 const fs = require('fs');
 
 const rs = fs.createReadStream('./demo1.txt', {
-    highWaterMark: 3
+    highWaterMark: 3,
+    encoding: 'utf8'
 });
 
 const ws = fs.createWriteStream('./demo2.txt', {
-    highWaterMark: 2
+    highWaterMark: 1,
+    encoding: 'utf8'
 })
 
+rs.setEncoding('utf8');
 
 rs.on('data', function(data) {
     console.log(data)
@@ -22,9 +25,14 @@ rs.on('error', (error) => {
     console.log(error)
 })
 
+// drain事件: 当可写流缓存区清空之后执行触发这个事件
 ws.on('drain', () => {
     console.log('drain');
     rs.resume();
+})
+
+rs.on('end', () => {
+    ws.end();
 })
 
 
