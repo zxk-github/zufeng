@@ -1,0 +1,3 @@
+util.inherits(child, parent) 继承公有属性
+
+events 实现发布订阅，

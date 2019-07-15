@@ -1,0 +1,66 @@
+curl -v --headers 
+
+nodemon 启动node服务，监听项目文件变化
+
+server.on('request', (req, res) => {
+    监听请求事件
+
+    请求行
+    req.method 请求方法
+    {} = url.parse(req.url, true);  
+    req.httpVersion
+    req.httpVersionMajor
+    req.httpVersionMinor
+
+    请求头
+    req.header.key  所有key都是小写
+
+    请求体， req是一个可读流 
+    req.on('data', function() {
+        arr.push(data)
+    })
+    req.on('end', function() { 如果没有请求体，会直接执行end事件
+        
+    })
+
+
+    相应 
+
+    相应行 
+    状态码 res.statusCode = 200;  1xx - 5xx
+    
+    相应头
+    res.setHead('Content-Type', 'text/html;charset=utf-8')  不加- ie不兼容
+
+    相应体
+    res是一个可写流
+    res.write(1)  // write值只能是string or buffer
+
+    响应结束 
+    res.end(); end 每次调用write， 方法传递参数都会调用write, 然后就会报错
+
+
+    请求- > 响应是一个事物  同成功同失败
+})
+
+
+请求必须调用end方法
+let clint = http.request({
+    host: 'localhost',  不能加端口和协议
+    port: 3000,
+    path: '/url?a=1',
+    method: 'POST',
+    headers: {
+        a: 1
+    }
+})
+
+client.end(); 相当于我要给服务端的res写入内容
+
+
+queryString
+queryString.parse('a=1&b=2')
+
+
+
+

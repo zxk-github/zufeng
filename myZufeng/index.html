@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <meta name="MobileOptimized" content="320">
+    <meta http-equiv="cleartype" content="on">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <style media="screen">
+        html,
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    .wrap{
+          width: 100%;
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+    }
+    input{
+            width: 100%;
+    height: 30px;
+    line-height: 30px;
+    font-size: 24px;
+    }
+    #btn{
+        border: 1px solid #000;
+    height: 36px;
+    line-height: 36px;
+    width: 15%;
+    display: block;
+    }
+    #root{
+        height: 400px;
+        overflow: scroll;
+    }
+    .testBtn{
+        width: 100%;
+        height: 30px;
+        background: skyblue
+    }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+    <button class="testBtn" onClick="alert(+new Date())">点击测试</button>
+    <div class="wrap">
+        <button id="btn">发送</button>
+        <input type="text" value="" class="inputtext" id="input">
+    </div>
+    <script type="text/javascript">
+    window.onload = function() {
+        var btn = document.getElementById('btn'),
+            input = document.getElementById('input'),
+            content = document.getElementById('root');
+
+        btn.addEventListener('click', function(e) {
+            var dom = document.createElement('p');
+            dom.innerHTML = input.value
+            content.appendChild(dom)
+            input.value = ''
+            input.focus()
+        })
+        // input.addEventListener('keydown', function(e) {
+        //     window.focus()
+        //     input.focus()
+        // })
+    }
+    </script>
+</body>
+
+</html>

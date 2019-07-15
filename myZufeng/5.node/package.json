@@ -1,0 +1,19 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "2019 node",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "mime": "mime"
+  },
+  "keywords": [
+    "node",
+    "my"
+  ],
+  "author": "zxk",
+  "license": "MIT",
+  "dependencies": {
+    "mime": "^2.4.4"
+  }
+}

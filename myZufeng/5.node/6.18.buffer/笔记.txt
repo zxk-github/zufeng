@@ -1,0 +1,97 @@
+本地安装 
+全局安装
+/usr/local/bin/tsc -> /usr/local/lib/node_modules/typescript/bin/tsc
+/usr/local/bin/tsserver -> /usr/local/lib/node_modules/typescript/bin/tsserver
+命令指向的脚本位置
+为了在命令行中调用
+
+npm run 的时候，会零时的把node_modules/.bin/文件 加到全局环境中
+
+npx mime logo.png 调用项目的本地模块, 不需要在scripts中写对应的配置
+npx的时候，会零时的把node_modules/.bin/文件 加到全局环境中
+
+npx create-react-app project
+先下载create-react-app，放到临时目录环境变量中去，然后执行创建项目，创建完成之后，删除create-react-app
+
+nrm切换数据源
+nrm ls 查看数据源
+nrm test 测试数据源速度
+nrm use sourcename 使用某一个数据源
+
+发包
+npm login 
+username
+password
+npm publish
+
+现在已经不允许本地没有加载全局模块了
+
+buffer 字节组成的数组，一旦创建，就不能修改
+字节是一种计量单位，一个字节8个位，每一个位是0 或者 1
+所以一个字节最大只能保存2的8次方-1的数，所以范围是0-255
+
+存在的意义
+缓存区buffer是一个暂时存放输入和输出数据的一段内存
+js语言没有二进制数据类型，但是在处理tcp和文件流的过程中，必须使用二进制数据
+node提供buffer对象主要是用来对二进制数据进行处理
+buffer是一个只要创建就不能修改长度的东西，所以在创建开始之前就要确定buffer的大小
+buffer是一个字节8各位，但是在打印的时候会转换成16进制，可以有效的表示js中存在的二进制
+
+
+如何实现二进制和任何进制之间的转换
+0b  二进制
+0x  16进制
+0o  8进制
+任意进制转成10进制 parseInt('11', 2)  3
+10进制 转成任意进制
+console.log(3..toString(2))
+console.log((3).toString(8))
+
+创建buffer的三种方式
+let buf1 = Buffer.alloc(6)
+let buf1 = Buffer.allocUnsafe(6)
+let buf3 = Buffer.from('珠峰') // 通过字符串创建buffer
+uft8 一个汉子占据三个字节
+
+Buffer.alloc(size, [fill, encoding]) // fill内容会被循环填充
+在进行打印的时候 打印出来的都是16进制
+
+buf1.write('', start, length, encoded)
+
+有可能一个数字会占据多个位置 
+writeInt8 写一个长度为8个位的整行 这样每个位置最大只能防止255
+
+readInt8 读一个8个位的整数
+
+buf.toString(encode, start, end)
+
+buf.slice(start, end) // 截取一段buffer
+
+截坏了出现乱码咋办
+var Strd = require('string_decoder')
+let sd = new Strd();
+console.log(sd.write(buf.slice(3,4)))
+
+
+buf.copy(target, targetStart, sourceStart, sourceEnd)
+
+Buffer.isBuffer()
+
+Buffer.byteLength(str);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
