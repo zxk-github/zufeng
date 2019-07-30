@@ -1,0 +1,287 @@
+高阶函数
+如果函数的参数是一个函数，或者这个函数返回一个新的函数，这个函数都叫高阶函数
+
+使用 
+AOP 面向切片编程
+把一些核心的功能抽离出来，然后在他原有的基础上，不改变原有代码，添加一些自己的功能
+
+防抖 截流
+
+try catch只能用来捕获同步的错误
+
+promise 解决的问题
+
+函数的防抖和节流
+函数节流：指定时间间隔内只会执行一次任务
+函数防抖：任务频繁触发的情况下，只有任务触发的间隔超过指定间隔的时候，任务才会执行 (电梯只要门不关紧，这时候按按钮，电梯门依旧会重新打开)
+
+// 这种一直监听是否到达底部的方式非常耗费性能
+// 而在实际场景中需要这样进行处理，在滚动过程中，每隔一段时间去计算一次，函数的节流就是每隔一段时间去执行一次原本需要无时无刻都在执行的任务，所以在滚动事件中，添加节流函数是一次非常好的实践
+$(window).on('scroll', function () {
+    // 判断是否滚动到底部的逻辑
+    let pageHeight = $('body').height(),
+        scrollTop = $(window).scrollTop(),
+        winHeight = $(window).height(),
+        thresold = pageHeight - scrollTop - winHeight;
+    if (thresold > -100 && thresold <= 20) {
+        console.log('end');
+    }
+});
+
+function throttle(fn, interval = 300) {
+    let canRun = true;
+    return function () {
+        if (!canRun) return;
+        canRun = false;
+        setTimeout(() => {
+            fn.apply(this, arguments);
+            canRun = true;
+        }, interval);
+    };
+}
+$(window).on('scroll', throttle(function () {
+    // 判断是否滚动到底部的逻辑
+    let pageHeight = $('body').height(),
+        scrollTop = $(window).scrollTop(),
+        winHeight = $(window).height(),
+        thresold = pageHeight - scrollTop - winHeight;
+    if (thresold > -100 && thresold <= 20) {
+        console.log('end');
+    }
+}));
+
+函数防抖
+每次input输入，判断用户名是否存在
+好的用户体验和减少服务端压力的做法就是，用户输入之后的一段时间中没有内容输入话，就去请求，如果在后面的一段事件中还有输入那就不去请求
+$('input.user-name').on('input', debounce(function () {
+    $.ajax({
+        url: `https://just.com/check`,
+        method: 'post',
+        data: {
+            username: $(this).val(),
+        },
+        success(data) {
+            if (data.isRegistered) {
+                $('.tips').text('该用户名已被注册！');
+            } else {
+                $('.tips').text('恭喜！该用户名还未被注册！');
+            }
+        },
+        error(error) {
+            console.log(error);
+        },
+    });
+}));
+function debounce(fn, interval = 300) {
+    let timeout = null;
+    return function () {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            fn.apply(this, arguments);
+        }, interval);
+    };
+}
+
+
+// 节流
+window.addEventListener('scroll', throttle(() => {
+    console.log('程序执行一次')
+}), false);
+var throttle = function(fn, times=300) {
+    let sys = true;
+    return () => {
+        if(!sys) {
+            return;
+        }
+        sys = false;
+        setTimeout(() => {
+            fn();
+            sys = true;
+        },times)
+    }
+}
+
+oInput.addEventListener('input', ,false);
+
+var debounce = function(cb, times) {
+    let timer = null;
+    return () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            cb();
+        }, times);
+    }
+}
+
+ 
+lesson2 7.17
+变量提升 function var import
+
+var申明的变量会申明到全局上 污染全局环境， 没有块级作用域的概念
+
+默认情况下，应该把变量申明在某一个作用域下
+let const可以和{}连用，块级作用域， 不会申明到window上，回自己构建一个作用域，申明在自己的作用域里面
+
+
+// 空间不销毁，执行完成之后，销毁不算闭包
+
+Symbol(name) name充当着描述的角色，内部会将这个描述符toString()
+如果对象的属性是Symbol类型的，那么这个key值是不可枚举的
+const s4 = Symbol.for('xxx') 存在描述的不会重新申明，先看有没有，有直接取出来
+Symbol.keyFor(s4) // xxx
+es6中对象的key值可以是一个表达式
+obj = {
+    [key]: '123'
+}
+Symbol类型的key值是不可枚举的
+
+Symbol具有源变成的功能。可以改变默认系统级的方法
+let obj = {
+    [Symbol.split]
+}
+Object.getOwnPropertySymbols(obj)
+因为Symbol是独一无二的，并且是不可枚举的，所以可以作为一个对象的私有属性
+
+// 结构相同 可以直接通过相同的结构来取值
+
+对象的展开 剩余运算符... 分散数组和对象
+let arr3 = [...arr1, ...arr2];
+let obj = {...obj1 , ...obj2}
+
+let {length}
+
+解构赋值
+剩余运算符... 可以使用在对象和数组中，只能用在之后以为，会把剩下的内容重新组合
+Array.from()  根据长度遍历，然后专数组
+[...{0: 'a', 1: 'b', length: 2}] 报错  ...是遍利器
+
+...展开的值必须有[Symbol.iterator]属性   数组 arguments都有
+
+
+JSON.parse(JSON.stringfy())
+
+问题 
+对象没有iterator为啥可以使用...
+let obj1 = {a: 1}
+let obj2 = {b: 2}
+var obj = {...obj1, ...obj2}
+
+注意看一下在Object上的静态方法，哪些适用数组
+
+如果仅仅是把一个对象展开到另一个对象里面，这中间根本就不需要迭代的过程，只是相当于解包了，如果希望打印，那就需要遍历每一个值，这个时候就会报iterator错误
+
+
+...有时候充当的是展开运算符比如console.log(...[1, 2, 3]) // 1,2,3
+有时候充当的是剩余运算符比如 [1, ...rest] = [1, 2, 3]
+当充当展开运算符的时候，后面的值必须要具有iterator接口
+当充当剩余运算符的时候 let [1, ...rest] = [1, 2, 3]  或者 let {x, ...y} = {x: 1, y: 2, z:3} 这个时候是不需要具有iterator的
+因为展开运算符展开的过程中会对值进行遍历，所有必须要有iterator，
+但是剩余运算符不需要进行遍历，仅仅是一个解包取值的过程，所以不需要具有iterator
+
+... 和Array.from区别
+
+深拷贝和浅拷贝
+
+set map不能放重复类型 
+set实现了forEach方法
+数组去重 交集 并集 差集
+
+
+
+string set map array arguments 就这几个自带iterator吧
+
+vue数据劫持
+
+lesson3
+node模块 是commonjs规范
+
+commonjs require 动态引入： 代码执行的时候可以动态引入
+if(true) {
+    require('a.js');
+}
+inport 不能进行动态引入, 静态引入 必须出现在文件顶端, 代码执行之前获取到
+
+模块作用 导入 导出
+
+export只能导出一个接口，可以通过接口获取到对应的值
+let a = 1;
+export a;   // 这时候会报错，因为相当于export 1；1不是接口
+export let a = 1;
+规定了对外的接口a。其他脚本可以通过这个接口，取到值1。它们的实质是，在接口名与模块内部变量之间，建立了一一对应的关系
+因为a是一个接口，所以a的值变化了，外面的使用的也会变化
+import 有申明变量的作用，并且存在变量提升
+
+试验性语法:动态倒入
+直接使用原型继承 父类传参是一个问题，父类上对象的引用问题
+
+类
+
+属性
+实例上的属性
+公共属性
+
+1. es6中的class申明的函数不能显示调用了
+function Animal() {
+    if(!(this instanceof Animal)) {
+        throw new Error('TypeError: Class constructor Animal cannot be invoked without new')
+    }
+}
+
+es6中
+super作用
+判断原型还是实例上的 hasOwnProperty
+属性访问器
+es5 es6如何继承类上的静态方法
+
+super()在构造函数中，指代父类，在原型方法中指带父类原型
+
+
+7.21
+发布订阅模式 两个人没有关系
+应用: promise 一个promise then多次
+观察者模式 被观察者状态变化的时候 一一通知观察者
+
+promsie中的链式调用中断(返回一个不成功也不失败的promise)
+
+promsie只能不要结果，但是不会终止程序的执行
+
+装饰器 AOP
+1. 装饰类  可以在类上修饰 属性上修饰 方法上修饰
+function add(target) {
+    target.type = 'my'; 
+}
+@add
+class my {
+
+}
+console.log(my.type) // my
+
+2. 多个装饰器执行顺序 
+
+3. 数组api
+reduce 
+应用 compose组合 将多个函数进行组合
+
+4. 箭头函数没有this arguments prototype
+
+5. 模版字符串
+
+6. eventloop
+函数执行的时候会创建执行上下文，执行结束会自动销毁执行上下文，全局上下文不会消失，只有浏览器关闭的时候才会消失
+作用域是函数在定义的时候产生的
+
+7. node全局变量
+global process Buffer clearInterval/setInterval clearTimeout/setTimeout clearImmediate/setImmediate
+
+node 文件中打印this 是module.exports
+
+7.24
+
+7.26
+fs模块
+
+util promisify inherits
+
+event 
+
+
