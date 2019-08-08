@@ -29,6 +29,11 @@ Object.defineProperty(obj, 'name', {
 })
 console.log(obj); //{ _body: 20, url: [Getter/Setter] } 说明通过defineProperty定义的变量默认是不可枚举的
 
+configurable  true 可以改变和删除
+enumerable 可便利
+writable true的时候可以改变 覆盖configurable的值
+默认都是false 
+
 
 
 

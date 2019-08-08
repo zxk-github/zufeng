@@ -277,6 +277,8 @@ node 文件中打印this 是module.exports
 
 7.24
 
+
+
 7.26
 fs模块
 
@@ -284,4 +286,381 @@ util promisify inherits
 
 event 
 
+7.28
+fs模块
 
+文件操作
+同步方法一般sync结尾 速度快可以立刻拿到结果，但是阻塞主线程
+异步 不会阻塞主线程 缺点: 代码维护困难
+fs.readFile(path, options, cb)读取文件内容  建议绝对路径
+options 'utf8' {flags: , 'encoding': 'utf8'}
+fs.writeFile(path, data, options, callback)
+options flags mode encoding
+上面都是执行小的文件方案，64k以下
+fs.copyFile()
+
+一个文件可以保存多个文件格式，但是存储的都是二进制数据
+path.resolve() 如果没有参数，默认当前命令行的执行路径(等同于process.cwd())
+
+理想状态 部分读取完毕之后写入
+打开文件
+flags: 文件系统标志 r r+ w w+ a a+ 
+fs.open(path, flags, mode, function(err, fd) {  // fd file descriptor  
+
+})
+读取文件
+fs.read(fd, buffer, offset, length, position, (err, bytesRead, buffer) => {
+    fd 文件标记符
+    buffer 读取数据放入的缓存区表示读取到那个内存中
+    offset 从buffer的那个位置开始写入
+    length 指定需要读取的字节数
+    position 表示文件中开始读取的位置 null node会自己维护
+    bytesRead 真正读取到的长度
+    buffer 真正读取到的数据
+})
+写入文件
+fs.write(fd, buffer, offset, length, position, function(err, bytesWritten, buffer ) {
+    fd 文件标记符
+    buffer 读取到的数据
+    offset 从buffer的那个位置开始写
+    length 写入的长度
+    position 写到文件的那个位置 null的时候，会自己维护写入位置
+    bytesWritten 成功写入的长度
+    buffer 真正写入的数据
+})
+关闭文件
+fs.close(fd, () => {})  
+
+目录操作
+fs.access(path, options, cb) 文件是否具有某一个权限 或者判断文件是不是存在
+fs.stat 文件状态
+fs.mkdir() 创建文件夹  创建下一级必须保证上一级存在
+fs.mkdir(path, options, () => {
+    options { recursive: true, mode: ''}
+})
+fs.rmdir 删除文件夹  文件夹不为空不能删除
+fs.rename 文件重命名
+fs.unlink 删除文件
+fs.readdir 读取目录内容 文件和文件夹组成的数组
+
+cad dac 中序
+acd adc 先序
+
+遍历方式 
+深度一直到底 
+广度 一层一层
+
+先序深度
+
+流stream
+文件可读流
+fs.createReadStream(path, {
+    flags: '',
+    encoding: null, 读取到的结果都是buffer
+    mode: '',
+    autoClose: true, 读取完成之后自动关闭
+    start: 读取开始位置 
+    end: 读取结束位置
+    highWaterMark: 每次读取最大长度， 最高水位线 
+})
+默认是非流动模式
+fs.on('open', (err, fd) => {
+
+})
+fs.on('data', (err, data) => { // 启动读取， 会被多次触发
+
+})
+fs.on('end', () => {
+
+})
+fs.on('error', () => {
+
+})
+fs.on('close', () => {
+
+})
+只有文件才有open/close事件
+fs.resume()
+fs.pause()
+
+可写流
+如何解决异步并发问题(比如说多个异步都向操作同一个文件) 放进缓存中 然后排队一个个执行
+ws = fs.createWriteStream(path, {
+    flags: 文件标记符
+    encoding: 编码
+    mode:   权限
+    autoClose:   写入完成之后是否立即关闭
+    start: 写入的开始位置
+    highWaterMark: 16k 给的超出了 只能放到内存中
+})
+ 
+let flag = ws.write(data, encoding, function() {
+    data // 只支持string/buffer 向文件中写入内容
+}) 
+flag // 表示写入数据是否达到预期 true 预期内 false 预期外(暂存区已经满了不能要了)
+超出缓存区返回false，但是不会丢失数据，不再接受数据
+
+ws.end('ok') 关闭文件，并且遗言也会写入文件，关闭文件之后不能写入了
+ws.on('drain', () => {
+    drain事件代表的是内容达到预期highWaterMark后，当内存中的内容都写入完毕后还会触发此回调函数
+})
+
+on('data') on('end') 这种可读流
+write()/end() 可写流
+如果都调用 那就是双工流
+
+管道
+rs.pipe(ws) 异步，读一点写一点 不会导致内存溢出 缺点: 看不到文件内容
+ 
+Duplex 双工流 可读可写
+继承了readable和writable
+
+转换流 Transform 双工流一种
+crypto 加密的
+MD5摘要算法 不能反解 不一样就会引起雪崩 长度固定
+
+process.stdin.on('data', function(data) {
+    console.log(data);
+    process.stdin.write(data)
+})
+process.stdin.pipe(transform).pipe(process.stdin)
+
+//转换流
+transform充当可写可读流
+
+
+7.31
+客户端可以设置一些规则 服务端进行解析 反之 服务端设置一些规则 客户端解析
+curl使用
+
+请求带参数的两种方式 
+1. /product/123
+2. ?a=1&b=2
+
+状态码是随意设置的
+
+
+创建一个服务器
+const server = http.createServer()  
+
+//监听每次请求
+server.on('request', (req, res) {
+    获取请求行信息 req.method req.httpVersion req.url
+    获取header头信息 req.getHeader['content-type']
+    获取请求体 req是可读流
+        const arr = [];
+        req.on('data', (data) => {
+            arr.push(data)
+        })
+        req.on('end', () => {
+            console.log(Buffer.from(arr).toString())
+        })
+        
+    响应相关
+    设置响应状态码 res.statusCode = 404 
+    设置头 res.setHeader('Content-type', 'text/plain')
+    res是可写流
+        res.write('hello')
+        res.end('word')
+})
+
+
+// 创建client端
+const client = http.request({ // client 意思就是req 此时是一个可写流
+    // options
+}, function(res) {
+    // res server端的返回值 是一个可读流
+    res.on('data', function(data) {
+        console.log(data)
+    })
+    res.on('end', function() {
+        console.log('读取完毕');
+    })
+})
+
+client.write('aa')
+client.end()
+
+
+**  对于server端来说 req 是可读流 res是可写流
+        创建 http.createServer().on('request', function(req, res) {})
+    对于client端来说 req 是一个可写流 res是可读流
+        创建 http.request(options, function() {}).write() 
+
+
+path模块
+path.basename 文件名
+    .dirname 文件夹名称
+    .extname 后缀名 
+    .join([paths]) 路径合并 
+    .parse(url) 解析url   
+    .relative(from, to) from到to之间的相对路径
+    .resolve([paths]) 将方法或者片段解析为绝对路径  后面的是绝对路径就会覆盖前面的
+
+fs模块
+  fs.stat(path, (stats) => {
+      stats.isFile()
+      stats.isDirectory()
+  })  判断文件类型
+  fs.access() 判断是否存在和具有某种权限 constants.F_OK constants.R_OK constants.W_OK
+  fs.readdir() 读取文件夹下的内容
+
+__dirname 当前文件所在的文件夹绝对路径
+__filename 当前文件的绝对路径
+process.cwd() 当前服务执行所在的文件夹
+
+
+8.2
+http缓存 
+304是服务端设置的
+强制缓存 logo 图片
+Cache-Control: 'max-age=5'  // 5秒内再发起同样请求，就别来找我了 
+Expires: new Date(Date.now()+20*1000).toGMTString()
+
+Cache-Control: no-store  不缓存
+               no-cache  缓存 但是每次都向服务器发起请求 询问
+
+协商缓存  当强制缓存失效的时候，会启动协商缓存
+1. 根据文件的最后修改时间，只要修改就就会失效，并且精确时间是秒，一秒内多次修改 检测不到
+s --> b Last-Modified: stats.ctime.toGMTString()
+stats.ctime文件的最后修改时间
+b --> s If-Modified-Since: 
+
+2. 比较指纹 存在性能问题 因为每次都需要读取文件
+md5 = crypto.createHash('md5').update(filecontent).digest('base64)
+s --> b Etag: md5
+
+b --> s If-None-Match
+
+修改时间+文件大小
+
+规则
+先做强制缓存
+
+文件压缩(转化流 zlip) 
+gzip deflate
+重复率越高 压缩越好
+浏览器支持的压缩格式 Accept-Encoding
+服务器压缩的方式 Content-Encoding: gzip/deflate
+
+user-agent
+
+res.statusCode = 302  /  301
+res.setHeader('Location', 'www.baidu.com');
+
+8.4 
+跨域
+xml.responseText 都是字符串
+xml.response 区别 不设置json类型就是字符串，设置就是json
+
+跨域只会在浏览器中才会存在  webapp不存在跨域问题
+
+跨域: 浏览器的同源策略
+协议 主机名 端口号 有一个不同就是跨域
+iframe websocket jsonp cors
+
+简单请求
+加上header设置就是发送复杂请求
+
+复杂请求 先发一次方法是options的预请求
+ 
+服务端设置
+res.setHeader()
+Access-Control-Allow-Origin  允许的源
+Access-Control-Allow-Methods 允许的请求方法
+Access-Control-Allow-Headers 允许那些头
+Access-Control-Max-Age   多久之内不需要进行预请求
+Access-Control-Credentials: 'true'
+
+如果跨域是不允许携带cookie的
+
+uuid 计算出不会重复的值
+
+文件上传
+
+多语言
+req aceept-language:zh-CN,q=1
+
+放盗链
+可以判断当前资源是否被被人引用
+
+下午 
+反向代理 正向代理
+
+代理帮我干一些事情
+代理对服务其来说是透明的，他不知道是客户端还是代理服务器访问的 权限校验 或者添加一些功能
+反向代理 客户端直接访问代理服务器 可以做缓存 cdn 虚拟主机配置多域名
+
+webpack proxy 就是反向代理
+http-proxy
+
+koa
+
+express 大而全全是使用es3写 处理异步不优雅，处理异步都是基于异步
+koa 基于promise的
+
+context 方便req, res 都挂在在了ctx下 ctx包含了res, req
+request 包装了req中的属性和方法
+response 包装了res中的属性和方法
+
+req res 原生的
+request response都是二次封装的
+ctx集成了上面的四个
+
+中间件 
+1中间执行的逻辑，
+2可以在ctx扩展一些属性或者方法
+3决定是否向下执行
+
+koa-bodyParser 解析请求体的，但是不支持文件上传
+
+访问不同的路径 返回不同文件 
+
+koa-static koa的静态服务插件
+
+8.3
+koa-router
+
+app.use((ctx, next) => {
+
+})
+
+koa-generator koa的生成器
+npm install koa-generator -g
+koa2  projectName
+
+koa-json解析json
+
+方法405 服务器允许的方法 Method not Allow
+
+session
+cookie 每次请求都会自动带过去，为了解决http无状态为题产生的，可以保持前后通信 4K 不能什么都放到cookie中 会造成流量浪费 存放到客户端中没请求会自动带过去
+localStorage 不删就一直存在，不能跨域 5M
+sessionStorage 只存在当前绘话 5M
+
+domain 域名：cookie可以在哪个域名下生效，但是可以与子域共享
+path 在那个路径下生效, 不再那个路径下，浏览器就不会显示出来对应的cookie
+Expires/Max-Age  session 应用关掉就消失 
+Expires 绝对 Max-Age 相对
+Http true 客户端不能改 
+
+req.headers.cookie
+res.setHeader('Set-Cookie', 'count=10, domain=a.zufeng.com, path=/user, max-age=10, httpOnly=true')
+res.setHeader('Set-Cookie', 'count=10, domain=a.zufeng.com, path=/user, max-age=10`') 后面会覆盖前面的
+res.setHeader('Set-Cookie', ['count=10, domain=a.zufeng.com, path=/user, max-age=10`', 'name=12']) 设置多个
+
+设置httpOnly通过document.cookie不能获取到
+一般情况下，设置httpOnly只能防止前端js代码修改
+
+设置的时候加上签名，如果客户端改了，就不识别
+crypto = require('crypto);
+// sha256 加盐算法
+let sign = crypto.createHmac('sha256', secrite).update(value+'').digest('base64').replace(/\+|\/|\=/, '')
+value = value+'.'+sign;
+
+读的时候
++ / = 在base64中存在bug 所以一般会去除
+
+uuid 生成唯一一个值
+session session是基于cookie的 session是保存在服务端的，可以保存一些敏感信息
+服务端利用用户信息生成一段session 

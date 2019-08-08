@@ -2,7 +2,7 @@ function myNew(...args) {
     let fn =  args.shift();
     let obj = Object.create(fn.prototype);
     let res = fn.apply(obj, args);
-    return typeof res instanceof Object ? res: obj;
+    return res instanceof Object ? res: obj;
 }
 
 function Animal(name) {

@@ -1,0 +1,173 @@
+js
+ecmascript js标准
+dom js操作页面DOM
+bom js操作浏览器
+
+js特点
+解释型语言: 不需要编译写完可直接运行
+动态语言:变量可以保存任意值
+基于原型的面向对象
+
+语言本指向就是向计算机发布指令，命令计算机做一些事情
+
+输出
+alert(1); 弹框
+document.write('hello word')  //向body中输出一个内容， document代表当前文档
+console.log(123) 控制台输出
+
+js代码书写位置
+1. html标签中
+<button onclick="alert('hello')">点击</button>
+2. 写在超链接href中
+<a href="javascript:alert('点击')">点击</a>
+上面虽然js可以运行，但是结构和行为耦合，不方便维护
+3. script标签中
+<script>
+    alert(1);
+</script>
+4. 写在外部js文件中
+<script src="./1.js"></script>
+script用于引入外部js文件之后，中间写js代码不会起到作用了
+
+// 单行注释
+/**/ 多行注释
+
+05
+字面量和变量
+字面量:不可改变的量1 2 3 'hello'，可以直接使用
+变量:可以用来保存字面量，并且变量值可以任意改变，变量更加方便使用x = 1; x就是变量，可以通过变量对字面量进行描述
+声明变量 var 关键字
+var a
+声明和赋值同时进行
+
+标识符: 在js中所有可以由我们自主命名的都可以称为标识符
+例如:变量名 函数名 属性名都是标识符
+规则
+    1.只能包含字母 数字 _ $
+    2.标识符不能以数字开头
+    3.标识符不能是ES中关键字和保留字
+    4.一般采用驼峰命名
+JS底层保存标识符的时候，采用的是Unicode编码，所以理论上中文也能当作变量名
+
+07 数据类型
+数据类型指的就是字面量类型
+六种数据类型
+String Number Boolean Null(空) Undefined(未定义) Object
+基本数据类型String Number Boolean Null(空) Undefined(未定义)
+引用数据类型 Object
+
+\" "
+\' '
+\n 换行符
+\t 制表符
+\\ \
+str = '\\\\\\'; \\\
+
+08 数值
+typeof 变量 typeof运算符检查变量类型
+Number 类型 整数 浮点数 NaN 
+
+Number.MAX_VALUE js中的最大值
+Number.MIN_VALUE js中可以表示的最小的浮点数
+如果数字的值超过了最大值 会返回Infinity  Infinity是一个字面量 
+NaN 是一个特殊的数字，Not a Number 表示不是一个数字
+
+如果使用js进行浮点数计算，可能会得到一个不精准的数字，所以千万不能使用js进行对精确度比较高的计算
+
+09 Boolean
+Boolean值只有两个true false，主要用于逻辑判断
+
+10 null undefined
+null这个值专门用来保存空对象 typeof null // object
+undefined 声明但是没赋值返回undefined, 如果没申明直接使用，会报错
+
+11 强制类型转换
+类型转换主要指：将其他数据类型转换为 String Number Boolean
+1. 将其他数据类型转换为String
+方式1: 调用被转换类型的toString()方法，该方法不会修改原变量，会将转换结果返回
+    ** null  undefined这两个值没有toString()，调用会报错
+    true -- > 'true'
+    [1,2,3,4].toString() --> '1,2,3,4'
+    [1,2,[3, [4]]].toString() --> '1,2,3,4'
+    {a: 1}.toString() --> '[object Object]'
+    [].toString() --> ''
+    String(function fn(){}) --> "function fn(){}"
+    var fn = function(){}
+    fn.toString() -->"function(){}"
+    function fn1() {}
+    fn1.toString() --> "function fn1() {}"
+方式2: 调用String()函数，并将被转换的数据作为参数传给Sting()函数
+    ** null undefined 可以直接传入函数，返回'null'  'undefined'，不会调用toString()方法，因为他俩就没有这个方法
+    ** 使用String()对数字和boolean进行强制类型转换，实际上调用的就是toString()方法
+2.将其他数据类型转换为Number
+方式1: 使用Number()函数转换
+    0. 如果是纯数字字符串，则直接将其转换为数字, 忽略开头的全部0
+    1. 非纯字符串转换为数字，返回NaN
+    2. 如果字符串是一个空串，或者全是空格的串，则转换为0  
+        Number('') // 0  
+        Number('    ')  // 0
+    3. true --> 1 false --> 0
+    4. null --> 0
+    5. undefined --> NaN
+    6. Number({a: 1}) Number({})  --> NaN
+    7. Number([]) --> 0 Number([1]) --> 1 Number([1, 2]) --> NaN
+方式2: 使用ParseInt() 把字符串转换为整数 ParseFloat字符串转换为浮点数
+    1. parseInt()可以将一个字符串中的有效的整数内容取出来，然后转换为Number
+    2. 只要不是数字开头的都返回NaN
+    4. parseInt('')  parseInt('  ') parseInt(true) parseInt(false) parseInt([]) parseInt({})  --> NaN
+    5. parseInt是专门针对字符串处理的函数，所以如果不是字符串类型，会先把参数转换为字符串类型，然后再进行操作，转换为字符串过程中，如果没有toString()，那就调用String()
+    parseInt([1,2,3]) --> 1 因为[1,2,3]会调用toString()转换为'1,2,3',然后parseInt('1,2,3')，转换为1
+3.其他进制转换10进制
+0x 16进制
+0o / 0  8进制
+0b 2进制
+1.不论什么进制，在进行输出的时候，都会转换为10进制输出
+2.在ie8一下 070会被认为是8进制，所以可以使用ParseInt('070', 10) // 第二个参数表示当前数字的进制数
+
+4.其他数据类型转换为boolean
+0/NaN/0.0 '' undefined null 都会被转成false
+非0  '  ' [] {} 都会被转成true 
+
+12 运算符也叫操作符
+运算符可以对一个或者多个值进行运算，并获取运算结果
+typeof 就是一运算符 可以用来获得一个值的类型 返回值是一个字符串
+var res = typeof '1';
+
+算术运算符 + - * / %
+当对非Number类型的值进行计算的时候，会将这些值转换为Number类型，然后进行计算
+NaN和任何值进行运算，结果都是NaN
+
+特例
++ 只要想家的两个数有一个不是数字，都会先将参数转换为字符串，然后拼接
+true+'1' --> true1
+str+'' 可以利用这一个特点将任意数据类型转为string
+
+任何值做 - * / 运算的时候，都会自动转换为Number
+可以利用这一特性进行隐式类型转换
+可以通过一个值 -0  *1 /1将其转换为Number
+
+13 一元运算符，只需要一个操作数 
++ - 
+** 对非number类型的，先转换为number，再进行计算
+** 如果将其他类型转换为数字，可以直接使用一元+来将其转换为Number，转换原理和Number()一样
+** 优先级高于二元运算符
++ 
+不会对数字产生任何影响
+-
+可以对数字进行取反
+
+14 自增 自减
+自增 
+1.通过自增可以使变量在自身的基础上增加1
+2.对于变量自增以后，原变量的值会立即加1
+++ -- 
+** 左右必须是一个变量，不能是一个字面量
+** 在进行运算的时候，会调用Number()进行转换
+var d = 20
+d++ + ++d + d
+20 + 22 + 22 //
+var a = 20;
+a = a ++
+// var e = a++;
+// a = e;
+

@@ -32,7 +32,7 @@ console.log([...arrLike])
 
 JSON.parse(JSON.stringify(obj))  // 不是json就会被移除
 
-// 浅拷贝  undefined 函数 数组 会被直接忽略 正则会转成{}
+// 浅拷贝  undefined 函数 会被直接忽略 正则会转成{}
 console.log(JSON.parse(JSON.stringify({a: 1, b: undefined, c: null, d: new Date, f: [1], g: /\d+/, f: function() {}})))
 
 
