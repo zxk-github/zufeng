@@ -206,3 +206,13 @@ resolve(p1);
 
 这时候p1的状态决定了p2的状态
 */
+
+a = 1
+switch (a) {
+    case 0: 
+        console.log(1);
+    case 1: 
+        console.log(2);
+    case 2: 
+        console.log(3);
+} 

@@ -23,7 +23,7 @@ function fn2() {
 }
 
 fn1.call.call.call(fn2);
-fn1.call 每个函数都有一个calll方法，fn1.call依旧是一个函数，所有它上面依旧有一个call方法，所以不管写多少个call，本质上都还是原型上的那个call方法，但是最后一个call(fn2), 让原型上的call方法中的this指向了fn2， fn1.call.call()函数执行，这时候实际上就是fn2执行
+fn1.call 每个函数都有一个call方法，fn1.call依旧是一个函数，所有它上面依旧有一个call方法，所以不管写多少个call，本质上都还是原型上的那个call方法，但是最后一个call(fn2), 让原型上的call方法中的this指向了fn2， fn1.call.call()函数执行，这时候实际上就是fn2执行
 由上面可以看出
 fn1.call(fn2) 这种只有一个call，原型call函数中this指向call前面的函数，所以call函数执行，函数内部的this就相当于fn1执行
 fn1.call.call.call(fn2)  这种多个call的情况最后一个call会将原型上call函数内部的this指向变为fn2, 然后fn1.call.call函数执行，this()执行，就相当于fn2执行，所以多个call，不论有几个，都是fn2执行一次

@@ -1,0 +1,97 @@
+Koa实例app上的属性和方法
+app.listen() 开启服务
+app.use(callback) 设置中间件 
+app.keys = [...keys]      设置签名cookie的密钥
+app.context.db  app.context是从其创建ctx的原型，可以通过编辑app.context为ctx添加属性和方法，可以将属性或者方法添加到整个引用程序
+app.on('error', () => {}) 处理错误逻辑
+
+上下文 context 
+Koa Context将node的request和response对象封装到单个对象中，为编写web应用程序和api提供了许多有用的方法
+ctx.req node的原生请求对象
+ctx.res node的原型响应对象
+ctx.request  koa的request对象
+ctx.response koa的response对象
+ctx.state 推荐的命名空间，用于通过中间件传递信息和你的前端视图
+    ctx.state.user = await User.find(id);
+ctx.app 应用程序实例的引用
+ctx.app.emit 因为应用程序实例继承至EventEmmit，所以可以用来触发事件
+ctx.cookies.get(name, [options])  options: {signed: true}
+ctx.cookies.set(name, value, [options]);
+options: {
+    maxAge: 
+    signed
+    expires
+    path
+    domain
+    secure
+    httpOnly
+    overwrite
+}
+ctx.throw([status], [msg], [properties])
+
+request
+request.header 请求的header头
+request.headers 和上面一样请求的header头 
+request.method 请求方法
+
+http:localhost:3000/write/url?a=1#aaa
+request.url  /write/url?a=1 请求的url
+request.originalUrl  /write/url?a=1  请求原始的的url
+request.origin http://localhost:3000 请求的域名
+request.href http://localhost:3000/write/url?a=1 请求完整的url
+request.path /write/url 请求路径
+request.querystring a=1 根据？获取的原始请求字符串
+request.search ?a=1 根据?获取的原始请求字符串
+request.host localhost:3000 获取主机名
+request.hostname localhost 获取主机名
+request.URL 解析请求的url信息
+{
+  href: 'http://localhost:3000/favicon.ico',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/favicon.ico',
+  search: '',
+  searchParams: URLSearchParams {},
+  hash: '' }
+request.type '' 设置Content-Type的时候，获取对应的字段(image/png)
+request.charset 设置的时候 获取请求的字符集
+request.query { a: '1' } 请求的查询参数
+request.fresh 检查请求是否新鲜，也就是内容没有改变，此方法用于If-None-Match/Etag,和If-Modified-Since/Last-Modified之间的缓存协商
+ctx.status = 200;
+ctx.set('Etag', '123');
+// 缓存是好的
+if(ctx.fresh) {
+    ctx.status = 304;
+    return;
+}
+// 缓存是陈旧的需要更新数据
+ctx.body = await db();
+request.stale 和request.fresh相反
+request.protocol 返回请求协议，http或者https
+request.accepts(types)
+request.acceptsEncodings(encodings) 返回匹配到的最佳压缩编码 不传，返回服务器支持的编码
+ctx.acceptsEncodings(gzip, deflate)  // gzip
+request.acceptsCharsets(charsets)  // 返回匹配到的最佳编码 不传，返回服务器支持的类型
+request.acceptsLanguages(langs) // 检查语言是否可以接受
+
+response
+response.header
+response.headers 响应头对象
+response.status  设置响应状态码
+response.message 将响应的状态消息设置为给定值
+response.body
+response.get(filed) 获取响应头
+response.set(filed, value) 
+response.set({
+    'Etag': '123'
+})
+response.remove(filed) 删除响应头
+response.type = 'text/plain' 设置Content-Type
+response.redirect(url) 重定向
+response.lastModified = new Date() 设置Last-Modified
+response.etag = '12' 设置etag

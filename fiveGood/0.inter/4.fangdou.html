@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <button id="btn"></button>
+  <script>
+    let oBtn = document.getElementById('btn');
+    // let debounce = (fn, delay) => {
+    //   let timer = null;
+    //   return function (){
+    //     clearTimeout(timer);
+    //     let args1 = arguments;
+    //     timer = setTimeout(() => {
+    //       fn.apply(null, [...args1])
+    //     }, delay)
+    //   }
+    // }
+    // let debounce = (fn, delay = 300) => {
+    //   let timer = null;
+    //   return (...args) => {
+    //     clearTimeout(timer);
+    //     timer = setTimeout(() => {
+    //       fn.apply(null, args)
+    //     }, delay)
+    //   }
+    // }
+    // function fn() {
+    //   console.log(1);
+    //   console.log(arguments);
+    // }
+    // let deb = debounce(fn, 2000)
+    // let throttle = (fn, delay) => {
+    //   let flag = true;
+    //   return (...args) => {
+    //     if(!flag) return; 
+    //     flag = false;
+    //     setTimeout(() => {
+    //       fn.apply(null, args);
+    //       flag = true;
+    //     }, delay)
+    //   }
+    // }
+
+    // function fn() {
+    //   console.log(arguments)
+    // }
+
+    // let thro = throttle(fn, 1000)
+    // oBtn.onclick = function() {
+    //   thro(1,2)
+    // }  
+
+    let throttle = (fn, delay = 300) => {
+      let flag = true;
+      return (...args) => {
+        if(!flag) return;
+        flag = false;
+        setTimeout(() => {
+          fn.apply(null, args);
+          flag = true;
+        }, delay) 
+      }
+    }
+    function fn() {
+      console.log(arguments)
+    }
+
+    let thro = throttle(fn, 1000)
+    oBtn.onclick = function() {
+      thro(1,2)
+    }  
+  </script>
+</body>
+</html>

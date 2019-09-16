@@ -634,23 +634,26 @@ koa-json解析json
 方法405 服务器允许的方法 Method not Allow
 
 session
-cookie 每次请求都会自动带过去，为了解决http无状态为题产生的，可以保持前后通信 4K 不能什么都放到cookie中 会造成流量浪费 存放到客户端中没请求会自动带过去
-localStorage 不删就一直存在，不能跨域 5M
+cookie 每次请求都会自动带过去，为了解决http无状态问题 可以保持前后通信 4K 
+**不能什么都放到cookie中 会造成流量浪费 存放到客户端中没请求会自动带过去
+localStorage 本地存储不删就一直存在，不能跨域 5M
 sessionStorage 只存在当前绘话 5M
+数据很时候可以考虑indexDB
 
-domain 域名：cookie可以在哪个域名下生效，但是可以与子域共享
-path 在那个路径下生效, 不再那个路径下，浏览器就不会显示出来对应的cookie
+cookie
+domain 域名：cookie可以在哪个域名下生效，但是可以与子域共享，不能跨域设置cookie
+path 在那个路径下生效, 不再那个路径下，浏览器就不会显示出来对应的cookie  这样可以减少cookie的传输
 Expires/Max-Age  session 应用关掉就消失 
 Expires 绝对 Max-Age 相对
-Http true 客户端不能改 
+Http 客户端是否能通过js进行读取和修改， 服务端设置的cookie(httpOnly=true)，客户端不能通过js修改和读取
 
-req.headers.cookie
+读取cookie req.headers.cookie
+设置cookie
 res.setHeader('Set-Cookie', 'count=10, domain=a.zufeng.com, path=/user, max-age=10, httpOnly=true')
-res.setHeader('Set-Cookie', 'count=10, domain=a.zufeng.com, path=/user, max-age=10`') 后面会覆盖前面的
+res.setHeader('Set-Cookie', 'name=12, domain=a.zufeng.com, path=/user, max-age=10`') 后面会覆盖前面的
 res.setHeader('Set-Cookie', ['count=10, domain=a.zufeng.com, path=/user, max-age=10`', 'name=12']) 设置多个
 
-设置httpOnly通过document.cookie不能获取到
-一般情况下，设置httpOnly只能防止前端js代码修改
+设置httpOnly通过document.cookie不能获取到，设置httpOnly只能防止前端js代码修改
 
 设置的时候加上签名，如果客户端改了，就不识别
 crypto = require('crypto);
@@ -664,3 +667,490 @@ value = value+'.'+sign;
 uuid 生成唯一一个值
 session session是基于cookie的 session是保存在服务端的，可以保存一些敏感信息
 服务端利用用户信息生成一段session 
+
+***
+cookie是数据通过加密组成value+sign的方式传递给客户端，这时候，会出现明文传输数据，并且sign如果不加盐，容易被仿制
+session是将数据以sessionId:value的形式保存在服务器中，将唯一sessionid暴露给客户端
+
+
+
+
+8.9 
+koa设置jwt
+设置cookie
+ctx.keys = ['zf'];
+ctx.cookies.set(key, value, opts)
+获取cookie
+ctx.cookies.get('key')
+
+json web token
+1.每次客户需要带着这个token，服务端校验(sha256)
+2.jwt可以实现跨域身份验证方案，cookie不能进行跨域
+jwt三个组成部分
+Header头部{alg: 'HS256', 'type': 'JWT'}
+payload负载
+sign签名部分HMACSHA256(base64UrlEncode(header)+'.'+base64UrlEncode(payload)+'.'+secret)
+
+两种生成token方式
+jwt-simple/jsonwebtoken
+
+
+express 
+1. 内部集成了路由系统
+2. 一些内置中间件
+
+// 自定义中间，但是中间件不会等待，因为内部没有promise
+app.use((req, res, next) => {
+    console.log(1);
+    // 想异步
+    setTimeout(() => {
+        next();
+    }, 1000)
+    console.log(2);
+})
+
+koa和express中间件区别
+都可以使用中间件机制扩展属性
+1. koa支持promise async/await 处理错误比较优雅，有error事件
+2. express 
+a. 处理错误需要通过next(err)传递出来，然后跳过多有中间件，进入下面错误中间件, 但是当前出错的中间件 还是会执行完毕
+app.use((req, res, next) => {
+    console.log(1);
+    next(122);
+    console.log(2);
+})
+app.use((err, req, res, next) =>{
+    console.log(err);
+})
+
+// 1 122 2
+b. 可以进行权限校验，没有权限就不向下走，
+错误， 可以进行权限校验，可以匹配对应路径
+
+app.use((req, res, next) =>{
+    console.log(err);
+})
+<==>
+app.use('/', (req, res, next) =>{
+    console.log(err);
+})
+只要匹配到/开头的都会走这个中间件
+app.use('/user', (req, res, next) => {
+    console.log(1);
+    // next('223');
+    console.log(2);
+})
+以/user开头的会走到这个中间件，/user/a /user/b /user/a/b 但是不会走到/
+
+c. 可以匹配对应路由
+
+app.get('/', function(req, res, next) {
+    console.log(1);
+})
+app.get('/', function(req, res, next) {
+    console.log(2);
+})
+app.get('*',function(req, res, next) {
+    console.log('all1');
+    next();
+})
+app.all('*',function(req, res, next) {
+    console.log('all');
+})
+
+这时候访问/，只会走第一个，当在第一个中加上next(),才会走第二个
+* 代表所有路径都可以匹配
+all 代表设置路径下，所有方法都能匹配
+ 
+express内置中间件
+
+koa-bodyParser bodyParser
+koa-views       自带模版引擎
+koa-multer      multer
+koa-cookie get/set  set cookie-parser
+koa-session     express-session
+
+8.12
+组件间通信
+
+8.16
+1. express内部路由实际上是维护一个栈形结构，当进行访问的时候，会依次匹配路径和方法，匹配成功执行回调函数
+2. express函数执行，返回的是一个应用的实例
+3. 路由支持链式调用，所以需要返回this;
+4. 一个路径可以添加多个毁掉函数，一个路径可以匹配多次
+5. 中间件，在路由之前执行的叫中间件，中间件不写，默认是/
+
+express路由实现规则
+1. 通过createApplication创建一个Application的实例
+2. 实例上有一个routes属性，保存着当前的所有路由 this.routes = [];
+3. this.routes的每一个元素都是一个Layer实例保存在当前路由的路径和route.dispatch方法，用于触发对象的路由
+4. 每个Layer可能有多个回调函数，所以layer实例上存在一个route的数组，保存这当前路径对应的全部回调函数，这些回调函数的执行时机是通过调用route.dispatch方法调用的
+5. route是一个数组，每个元素保存在当前路由对应的method和一个handler, 每个handler又是Layer的是一个实例
+
+中间件
+app.use('/', function(req, res, next) {
+    console.log(1)
+    next()
+})
+app.use('/user', function() {
+    console.log(2)
+})
+中间件可以匹配路径，以路径开头的中间件会按照顺序执行
+/use会执行上面两个
+中间件不会出现多个回调函数，所以不需要route.dispatch, 所以在中间件的layer中可以直接保存handler，所以layer不需要保存route属性，所以可以通过layer.route进行判断，当前的layer是中间件还是路由
+
+如果在回调函数执行出现错误，那么会跳过所有中间件，直接到错误处理中间件，错误处理中间件处理很简单，只要回调函数有四个参数，就是错误处理中间件
+
+路由中的next和中间件的next是什么关系
+中间件的next是最外层的next
+路由中的next是route.dispatch的时候传入的next(),所以这两个不是一个东西
+
+express结构 
+express/index.js  createApplication实例(express实例)
+Application new Router()
+            this.router.use() 处理中间件的逻辑
+            this.router.get() 处理用户绑定路由的逻辑
+            this.router.handler() 处理用户请求到来时的方法
+router/index this.stack = [];
+             use处理中间件 生成一个layer放到stack中
+                         layer中存放了中间件的路径和具体要执行的内容
+             get/post    生成一个layer放到stack中
+                         layer存放路由的路径和route.dispatch
+                         layer.route保存着保存这当前route的信息
+                         new Route().get(handler)
+router/route  get/post   this.stack = [];
+                         layer里面的路径没有意义，但是方法保存的是真实的方法
+                         layer.method 用于保存当前函数匹配的方法
+
+请求到来时
+1. 触发this.router.handler()方法
+2. 需要在router this.stack每个元素依次拿出来进行路径的匹配
+   如果是路由，要求路径相等
+   如果是中间件，可以是/或者以当前开头的都可以
+3. 路由中的next()指的是route stack中保存的handler，中间件中的next指的就是router中的next()
+4. 如果出错会会找到错误处理中间件
+5. 中间件的唯一标记就是layer.route = undefined
+6. 错误处理中间件的标记是handler.length === 4
+
+express二次笔记
+因为中间件和路由共用一个栈型结构，所以在中间件中必须调用next() 才能执行后面的路由逻辑
+app.use(function(req, res, next) {
+    console.log(1)
+    next() // 如果不调用next()就不会执行匹配到后面的路由 
+})
+app.get('/user', function(req, res, next) {
+    res.end('1221');
+})
+** next()就是下次路由或者中间件执行时机
+
+
+
+express支持统一对某一个参数提前处理
+// 路径中存在参数时执行
+app.param('id', (req, res, next, value, key) => {
+    req.params.id = value + 100;
+    next()
+})
+实现原理 发布订阅模式 + function + next
+
+静态文件系统
+模版引擎
+app.set('view', view1) 设置模版存放位置，默认存放在view中
+app.engine('.html', require('ejs').__express) html结尾的使用__express这个方法渲染
+
+body-parser
+multer 上传文件
+cookie-parser
+express-session
+
+8.18 flutter
+Dart 
+web开发
+跨平台移动应用开发(flutter)
+脚本或服务端跨平台开发
+
+
+8.21
+webpack 模块打包器，webpack中一切都是模块
+代码转换: less sass --> css
+文件优化: 压缩css js html
+代码分割: 提取公共代码，首屏不需要执行的代码延迟加载
+模块合并: 按照功能把模块分类合并
+自动刷新: 监听本地文件变化，自动构建
+代码校验: 代码提交之前，可以进行一些规范校验
+自动发布: 更新完代码之后，自动候检出线上发布代码并传输给系统
+
+基本概念
+entry： 入口，webpack执行构建的第一步将从entry开始，可抽象成输入
+module: 模块，webpack中一切皆模块，一个模块对应着一个文件，webpack会从配置的entry开始递归找出所有以来的模块
+chunk: 代码块，一个chunk可以由多个模块组成，用于代码合并和分割，一般情况下一个entry会打包成一个chunk,但是也不一定，因为文件可以合并和分割，一个chunk对应一个生成之后的文件
+loader: 模块转换器，用于把模块原内容按照需求转换成新内容,供浏览器使用
+plugin: 扩展插件，在webpack构建流程中的特定时机注入扩展逻辑，做你想做的事
+output: 输出，webpack经过一系列处理，得到你想要的结果
+webpack在启动之后，会从entry文件中配置的module开始递归解析entry以来的所有module,找到每一个module,就会根据配置的loader去找出对应的转换规则，对module进行转换之后，在解析出当前module所以来的module
+这些模块会以entry为单位进行分组，一个entry和其所有依赖的module被分到一个组中，也就是一个chunk中，最后webpack会把所有的chunk转换成文件输出，在整个流程中webpack会在恰当的时机执行plugin里定义的逻辑
+
+mode: development | product | none; 告诉webpack相应地使用其内置的优化
+打包完成之后本质上就是
+(function() {})({
+    "./demo1/src/index.js": (function(module, exports) {
+    eval("console.log(11);\n\n//# sourceURL=webpack:///./demo1/src/index.js?");
+    })
+})
+开发模式 devtool: 'eval'默认开启
+sourceURL=webpack:///./demo1/src/index.js 为了开发模式方便调试
+
+配置开发服务器
+npm i webpack-dev-server –save-dev
+devServer: {
+    contentBase: //配置开发服务运行时文件的根目录，默认情况下是当前项目所在的目录,显示项目下的所有文件
+    host: // 开发服务器主机地址
+    port: // 配置端口号
+    conpress: // 是否启动gzip压缩
+}
+webpack-dev-server会监听文件变化，当文件变化之后会重新打包，这时候浏览器会自动刷新
+webpack-dev-server --open 启动服务，自动打开浏览器
+
+css处理
+默认情况下，引入一个文件的时候，webpack会默认是一个js模块，会使用js的解析规则进行解析，这时候不能识别css文件，然后就会爆出缺少loader错误
+css转换分为两步
+1. 获取到css文件内容
+2. 在页面中添加一个style标签，然后把css内容插入到页面中去
+
+loader
+通过loader，可以进行文件内容的转换
+test: 匹配处理文件的扩展名的正则表达式
+use: loader名称
+include/exclude 手动指定必须处理的文件夹或者屏蔽不需要的处理的文件夹
+options 为loader提供额外的设置选项
+module: {
+    rules: [
+        {
+            test: /.js$/, 
+            use: 'style-loader!css-loader'
+            use: ['style-loader', {loader: css-laoder}],
+            use: [{
+                    loader: style-loader
+                }, {
+                    laoder: 'css-loader',
+                    options: {
+                        importLoaders: 2
+                    }
+                },
+                    loader: 'postcss-loader'
+                    loader: 'sass-loader'
+                ]
+            loader: 'style-loader!css-loader'
+
+        }
+    ]
+}
+
+hash 每次打包，如果文件出现了变化，就会生成新的hash
+chunkHash
+contentHash
+
+output [name]
+单入口: chunk的名字默认是main
+多入口: chunk的名字就是key的值
+
+图片处理file-loader url-loader
+file-loader 直接在js中引入图片，图片实际上是一个二进制，js是没有办法处理的，file-loader本质上就是copy图片文件，然后返回copy之后的文件路径
+css-loader 找到css中的所有图片，引入进来
+url-loader 内置了file-loader,增强file-loader功能，可以实现小图片直接转为base64在css中引入
+use: {
+    loader: 'url-loader',
+    options: {
+        limit: 10*1024,
+        name: 
+        outputPath: 'images',
+        publicPath: '/static/images'
+
+    }
+}
+
+clean-webpack-plugin
+new CleanWebpackPlugin()
+
+分离css mini-css-extract-plugin 收集引入的css文件
+use: [style-laoder, css-loader] 替换为
+user: [MiniCssExtractPlugin.loader, 'css-loader']
+new MiniCssExtractPlugin({ 
+    filename: [name].css, //代码块chunk名字
+    chunkFileName: [id].css // 在异步加载的时候会使用到 
+})
+
+8.23
+压缩js
+terser-webpack-plugin 替换uglifyjs-webpack-plugin 解决uglifyjs不支持es6语法问题
+optimize-css-assets-webpack-plugin压缩css
+optimization: { // optimization方式优化的内容
+    minimizer: {
+        new TerserWebpakPlugin({
+            parallel: true, //开启多进程压缩
+            cache: true // 开启缓存，如果源代码没有发生变化，那么下次就会使用缓存
+        }),
+        new OptimizeCSSAssetsPlugin({
+            assetNameRegExp:/\.css$/g,
+            //cssnano是PostCSS的CSS优化和分解插件。cssnano采用格式很好的CSS，并通过许多优化，以确保最终的生产环境尽可能小。
+            cssProcessor:require('cssnano')
+        })
+    }
+}
+
+publicPath: '/static' 在浏览器中访问的时候，是哪一个路径下访问 /static/**
+
+
+文件指纹
+打包后输出的文件名和后缀
+hash一般是结合CDN缓存来使用，通过webpack构建之后，生成对应文件名自动带上对应的MD5值。如果文件内容改变的话，那么对应文件哈希值也会改变，对应的HTML引用的URL地址也会改变，触发CDN服务器从源服务器上拉取对应数据，进而更新本地缓存。
+
+filename: '[nane].[hash].js'
+hash 针对整个项目，代表本次编译，只要项目有一个文件发生变化，编译一次，hash会变，所有的产出的资源hash都一样
+chunkhash 针对一个chunk,代码块的hash，依赖文件不发生变化，chunkhash不发生变化，每个chunk文件的hash不一样，每一个entry都会产生一个chunk， 一个chunk代表一组模块，其中一个发生变化，对应chunkhash变化发生变化
+contenthash 针对单个文件，文件内容不发生变化，就不会变
+
+output.filename中不能使用是因为一个入口有可能有多个chunk,每个chunk会有多个内容
+
+html-withimg-loader 在html中引入图片
+{
+    test: /\.(html|htm)$/,
+    use: 'html-withimg-loader'
+}
+
+glob模块
+glob.sync('./src/**/*.js') 根据规则，返回一组符合条件的文件名
+
+支持es7
+{
+    test: /\.jsx?$/,
+    use: {
+        loader: 'babel-loader',
+        options:{
+         "presets": ["@babel/preset-env"],
+         "plugins": [
+            ["@babel/plugin-proposal-decorators", { "legacy": true }],
+            ["@babel/plugin-proposal-class-properties", { "loose" : true }]
+         ]
+        }
+    },
+    include: path.join(__dirname,'src'),
+    exclude:/node_modules/
+}
+
+设置production只会压缩js不会压缩css html 
+
+@babel/preset-env @代表一类库
+
+
+
+
+
+8.25
+eslint 核心模块
+eslint-loader 
+babel-eslint
+.eslintrc.js
+module.exports = {
+    root: true,
+    parserOptions: { //解析选项
+        ecmaVersion: 'es2015'
+    },
+    env: { //指定运行环境
+        browser: true,
+        node: true
+    },
+    rules: [
+        'ident': ['error', 4]
+    ]
+}
+
+loader配置，设置loader执行顺序
+enforce: pre | normal | post; 之前 | 正常 | 之后
+enclude: 文件夹 包含文件
+exclude: 文件夹 排除文件
+
+npm install eslint-config-airbnb --save-dev
+parse: 'babel-exlint' // 解析规则
+extends: 'airbnb' // 继承规则名称
+
+window \r\n
+
+8.25
+// 此插件会自动向所有模块注入一个_变量，引用的就是lodash,直接可以像使用全局变量一个使用_
+new webpack.ProvidePlugin({
+    _: 'lodash'
+})
+
+watch: true 打包一直处于监听状态
+
+8.29
+px转rem
+
+context: __dirname, // 如果给了context, 那么所有的相对路径都是根据这个目录
+
+{
+    loader:'px2rem-loader',
+    options:{
+        remUnit:75,  // 1rem 是多少
+        remPrecesion:8 // 保持精度数
+    }
+}
+
+lib-flexible
+
+webpack优化
+.dll 动态类型库
+希望把第三方库进行单独打包，这样就可以提高打包速度
+
+9.1
+compiler 编译的整个过程
+
+loader 
+将js不能识别的代码转换成js可以识别的代码
+
+
+9.8
+angular mvvm框架
+vue，react视图层框架
+@babel/preset-env
+
+react元素 React.createElement
+
+组件化
+我们可以很直观的将一个复杂的页面分割成若干个独立组件，每个组件包含自己的逻辑和样式，再将这些组件组合完成一个复杂的页面，这样既减少了逻辑的复杂度，又实现了代码的重用
+
+JSX：一种JS和HTML混合的语法，将组件的结构、数据甚至样式都聚合在一起定义组件
+JSX实际上一种语法糖，最终通过babel转译成createElement语法
+ReactDOM.render(
+    <h1>hello</h1>,
+    document.getElementyId('root');
+)
+react元素
+就是一个普通的js对象，里面保存着节点的描述，描述了我们界面上元素的样子，ReactDOM会根据这个对象的描述生成真实的DOM
+react元素是构成react应用的最小单位
+<js标签
+{js表达式}
+同层级并且类型相同的才需要key值
+dangerouslySetInnerHTML={{__html: '<input />'}}
+
+组件和props
+将UI切分成一些独立的可复用的部件，这样你就只需要专注于构建每一个单独的部件
+组件接收参数，并返回用于描述展示内容的react元素
+
+1. 函数组件：就是一个函数，执行完以后会返回react元素 
+函数组件和普通的函数直接区别就是 函数组件首字母需要大写
+function Counter(props) {
+    return <div>122 {props.name}</div>
+}
+
+2.类组件
+·
+
+9.15
+redux 中央状态管理工具
+创建一个仓库，里面有应用唯一的状态，任何组件都可以从状态中取值，任何一个组件也都可以改变状态的值
+redux中，状态只有一个，状态树也只有一个，仓库也只有一个
+
+
+

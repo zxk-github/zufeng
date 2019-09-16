@@ -1,0 +1,345 @@
+jsx 模版描述语法
+单向数据流
+vue react
+数据驱动的方式开发应用程序，
+
+babel进行转换
+<h1>react</h1> ---> React.createElement --> vdom
+在写react项目的时候都需要import React from 'react' 就是因为jsx默认会转换为React.createElement
+
+自定义组件首字母大写
+
+组件的两种形式
+函数组件，仅供状态展示，但是在16.8加入了hooks，可以在函数组件中改变状态
+类组件可以直接进行生命周期钩子操作
+
+属性是只读的，不能修改
+将嵌套复杂的组件抽取为更小的组件是最佳实践
+
+状态 在组件中设置了状态，如果状态发生了变化，render函数会重新执行，页面就会发生变化
+状态声明
+状态修改 setState
+setState注意事项
+  1. 状态是封闭的， 只有组件自己能访问和修改
+  2. 状态是异步的批量的执行操作
+    批量操作：对同一个key进行多次操作会并，将来只执行一次，只会执行最后一次
+    可能是异步的(生命周期钩子中执行的数据更行一定是异步的)
+    如果要获取最新的值： 
+    1. 传递函数给setState 当做的某一个操作，需要用到前面修改的某个状态的值的时候，必须使用
+    2. setTimeout(() => console.log(this.state.counter)) 使用原生事件中获取当前状态中的值
+
+setState是react中用来修改组件的方法，通常情况下使用setState有两种形式，一种是直接传递对象，另一种是直接传递回调函数
+setState有两点，
+1，批量操作: 对同一个key值进行好几次连续的修改，最终只会有最后一次操作会起作用，因为所有的批量操作会被合并，这个行为被称为批量执行，同时还可以进行多个key的修改一次执行
+2. setState在一些情况下是同步的，但是在一下情况下是异步的
+  原生事件函数中是同步的，(click事件 跳过了react的事件循环机制，setTimeout是因为事件环的原因)
+  生命周期钩子中是异步的
+
+react中没有双向数据绑定的概念，所以input的输入和输出都需要自己实现
+
+子元素想改变父元素数据，需要调用父元素方法，这叫状态提升
+
+生命周期钩子
+16.3之前
+初始化阶段
+  属性和状态的初始化(props和state)
+挂载阶段
+  componentWillMount 组件将要挂载 此时可以访问组件的状态和属性，可以进行api调用
+  render 渲染函数执行
+  componentDidMount 组件已经挂载 可以进行状态的更新操作，可以进行api调用
+更新阶段
+  props
+    componentWillReceiveProps 属性的变化会触发这个钩子
+    shouldComponentUpdate(prevProps, prevState) prevProps, prevState指代的是之前的值，生命周期钩子返回true，会向下执行
+    componentWillUpdate
+    render
+    componentDidUpdate
+  states
+    shouldComponentUpdate
+    componentWillUpdate
+    render
+    componentDidUpdate
+卸载阶段
+  component
+
+render函数执行一共三种情况
+1. 组件第一次挂载到页面时会执行一次
+2. 父组件给子组件的数据发生变化，子组件会跟着变化
+3. 组件本省的state发生变化
+
+16.3 版本
+
+16.4 版本
+
+lesson2
+1. import style from './app.module.css'
+<div className={style.img}></div>
+
+按需加载组件
+2. 修改react项目默认webpack配置 customize-cra
+创建config-overrides.js
+import { override, fixBabelImports} from 'customize-cra';
+module.exports = override(
+  fixBabelImports('import', {
+    libararyName: 'antd',   // 按需加载的库
+    libararyDirectory: 'es', // 按需加载库下面的文件夹
+    style: 'css' // 样式来至于那个文件夹下的那个结尾的文件
+  })
+)
+
+bebal-plugin-import
+script: {
+  start: 'react-app-rewired start'
+}
+纯函数：不会尝试修改形参的值，并且多次调用相同的入参始终返回相同的结果
+react有一个严格的规则：
+所有react的组件都必须像纯函数一样保护他们的props不被更改
+
+state和props类似，但是state是私有的，并且完全受控于当前组件
+
+容器组件和展示组件 (傻瓜组件和聪明组件)
+容器组件负责数据的获取，维护业务逻辑
+展示组件负责根据props显示信息，展示数据
+组件复用性高，易于单元测试
+
+尽可能写成纯组件 值没有变化的话，不进行render函数执行
+class Comment extends PureComponent {
+  render() {
+    console.log(11)
+    return (
+      <div>
+        <p>aaa</p>
+      </div>
+    )
+  }
+}
+
+PureComponent比较规则
+1. 直接比较值是不是相等
+2，对象比较keys.length是不是相等
+3. 比较key对应的value是不是相等
+
+immutable.js
+
+16.6 React.memo 本质上是一个高阶组件，让函数组件也有PureComponent的能力
+const React.memo(({data}) => {
+  return (
+    <div>{data}</div>
+  )
+})
+
+高阶组件
+提高组件的复用率，首先想到的就是抽离相同逻辑，在React里就有了HOC(Higher-Order Component)的概念
+高阶组件也是一个函数，但是他返回另外一个组件，产生新的组件可以对属性进行包装，也可以重写部分生命周期钩子
+扩充之前比较弱的组件的功能
+const withKakea = (Component) => {
+  const NewComponent = (props) => {
+    return <Component {...props} name="kaike高阶组件" />
+  }
+  return NewComponent
+}
+
+高阶组件链式调用
+
+ES7装饰器
+npm 
+config-overrides.js
+import { addDecoratorsLegacy, override } = require('customize-cra');
+override(addDecoratorsLegacy())
+
+npm install -D @babel/plugin-proposal-decrators
+
+装饰器只能用来装饰类
+
+组件复合
+复合组件给你足够的敏捷去定义自定义组件的外观和行为，而且是以一种明确和安全的方式进行
+如果组件间有公用的非UI逻辑，将他们抽取为js模块导入使用而不是继承它
+function Dialog(props) {  // props.children是固定的名称
+  return ( 
+    <div style={{border: '1px solid #000'}}>
+      // props.children类似匿名插槽
+      {props.children}
+      // props.footer 具名插槽
+      {props.footer}
+      <div>
+        {props.foo('我给值，父级给规则')}
+      </div>
+    </div>
+  )
+}
+// welcomeDialog通过复合组件提供内容
+function welcomeDialog() {
+  let footer = <button onClick='() => alert(11)'></button>
+  return (
+    <Dialog footer={footer} color='red' foo={(c) => <p>{c}</p>}>
+      <h1>欢迎</h1>
+      <p>热烈欢迎</p>
+    </Dialog>
+  )
+}
+props.children是什么
+是合法的js表达式，如果是jsx的话，他本质上就是一个js对象，因为将来会被编译成一个虚拟dom 
+传入的是函数，需要props.children()
+
+function FilterP(props) {
+  return <div>
+    React.Children.map(props.children, child => {
+      console.log(child);
+      if(child.type != 'p') {
+        return;
+      }
+      return child;
+    })
+  </div>
+}
+
+<FilterP>
+  <div>萨达</div>
+  <p>asad</p>
+</FilterP>
+
+createElement创建的虚拟dom的是不可扩展的
+
+<RadioGroup name="radio">
+  <Radio value="vue">vue</Radio>
+  <Radio value="react">react</Radio>
+  <Radio value="angular">angular</Radio>
+</RadioGroup>
+function RadioGroup(props) {
+  React.Children.map(props.children, child => {
+    React.cloneElement(child, {name: props.name})
+  })
+}
+
+function Radio(props) {
+  return (
+    <label>
+      <input type="radio" value={props.value} name={props.name}>
+      {props.children}
+    </label>
+  )
+}
+
+组件的跨层级通信 -context
+Provider: 外层提供数据的组件
+Consumer: 内层获取数据的组件
+
+// 创建上下文
+const FormContext = React.createContext()
+const FormProvider = FormContext.Provider;
+const FormConsumer = FormContext.Consumer;
+
+let store = {
+  a: 1
+}
+return (
+  <FormProvider value={store}> 
+    <div>
+      <FormConsumer>
+        {store => <p>{store.a}</p>}
+      </FormConsumer>
+    </div>
+  </FormProvider>
+)
+
+lesson3
+16.8 Hook 是reat16.8新增项目，它可以让你在不编写class的情况下使用state以及其他react特性
+Hook特点
+  使你在无需修改组件结构的情况下复用状态逻辑
+  可将组件中相互关联的部分拆分成更小的函数，复杂组件将变得更容易理解
+  更简洁、更易理解
+
+improt React, {useState, useEffect} from 'react';
+
+function FruitList({fruits, setFruit}) {
+  return (
+    fruits.map((fruit) => {
+      retrun <li key={fruit} onClick={() => setFruit(fruit)}>{fruit}</li>
+    })
+  )
+}
+function FruitAdd(props) {
+  let [pname, setPname] = setState(''); 
+  const {dispatch} = useContext(Context) // 放入上下文实例,就能获取到传入的value属性
+  let onAddFruit = (e) => {
+    if(e.key == 'Enter') {
+      # props.addFruit(pname)
+      dispatch({type: 'add', payload: pname})
+      setPname('')
+    }
+  }
+  return (
+    <input value={pname} 
+    onChange={(e) => e.target.value} 
+    onKeyDown={onAddFruit}/>
+  )
+}
+
+// 将状态移至全局
+function fruitReducer(state, action) {
+  switch(action.type) {
+    case 'init':
+      return action.payload;
+    case 'add': 
+      return [...state, action.payload]
+    default:
+      return state;
+  }
+}
+
+const Context = React.createContext();
+
+export default function HookTest {
+  // useState参数是状态初始值
+  // 返回一个数组，第一个元素是状态变量，第二个参数是状态变更函数
+  const [fruit, setFruit]  = useState('');
+  // const [fruits, setFruits] = useState([])
+  const [fruits, dispatch] = useReducer(fruitReducer, [])
+
+  // 每次组件进行渲染的时候，都会执行副作用
+  // useEffect如果不进行限制，任何状态的变化都会导致函数不停的重复执行
+  // setFruits的变化会导致useEffect的执行，useEffect执行又会添加新的定时器，然后又会概念setFruits，最终奔溃
+  useEffect(() => {
+    setTimeout(() => {
+      # setFruits(['草莓，香蕉'])
+      dispatch({type: 'init', payload: ['草莓']})
+    }, 100)
+  }, []) // 设置依赖，告诉effect在什么发生变化的时候，他才会执行
+
+  useEffect(() => {
+
+  }, [fruit])
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      console.log('应用启动')
+    }, 100);
+
+    // 返回清楚函数
+    return function() {
+      clearInterval(timer);
+    }
+  })
+
+  return (
+    <div>
+      <Context.Provider value={{fruits, dispatch}}>  // 传入之后，意味着在任何下级组件中都能方便的获取到value的值
+        <p>{fruit === '' ? '没有选择水果' : `您选择的是${fruit}`}</p>
+        # <FruitAdd addFruit={(pname) => setFruits([...fruits, pname])}></FruitAdd>
+        # <FruitAdd addFruit={(pname) => dispatch({type: 'add', payload: pname})}></FruitAdd>
+        <FruitAdd></FruitAdd>
+
+        <FruitList fruits={fruits} setFruit={setFruit}></FruitList>
+      </Context.Provider>
+    </div>
+  )
+}
+
+useEffect Hook副作用的钩子
+useEffect 给函数组件增加了执行副作用操作的能力
+数据获取，设置订阅以及手动更改React组件中的DOM都属于副作用
+
+useReducer
+用来修改状态的一组函数,状态提升到全局，如果多个组件依赖一个状态，可以这样使用，类似redux
+
+useContext 用于快速在函数组件中导入上下文

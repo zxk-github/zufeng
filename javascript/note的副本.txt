@@ -89,7 +89,7 @@ undefined 声明但是没赋值返回undefined, 如果没申明直接使用，�
     true -- > 'true'
     [1,2,3,4].toString() --> '1,2,3,4'
     [1,2,[3, [4]]].toString() --> '1,2,3,4'
-    {a: 1}.toString() --> '[object Object]' // 这是一个错误的笔记 error
+    {a: 1}.toString() --> '[object Object]'
     [].toString() --> ''
     String(function fn(){}) --> "function fn(){}"
     var fn = function(){}
@@ -99,10 +99,6 @@ undefined 声明但是没赋值返回undefined, 如果没申明直接使用，�
 方式2: 调用String()函数，并将被转换的数据作为参数传给Sting()函数
     ** null undefined 可以直接传入函数，返回'null'  'undefined'，不会调用toString()方法，因为他俩就没有这个方法
     ** 使用String()对数字和boolean进行强制类型转换，实际上调用的就是toString()方法
-总结：
-    数字 字符串 boolean 函数 Synbol都会原值返回，
-    数组会被打平转换成一个元素组成的字符串,并且每一个元素都会调用对应的toString方法，数组元素是null或者undefined，会被转换为空字符串
-    对象会被转换为[object Object]
 2.将其他数据类型转换为Number
 方式1: 使用Number()函数转换
     0. 如果是纯数字字符串，则直接将其转换为数字, 忽略开头的全部0
