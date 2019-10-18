@@ -152,12 +152,14 @@ class MyPromise {
   static all(lists) {
     return new MyPromise((resolve, reject) => {
       let results = [];
-      for(let i = 0; i < lists.length; i++) {
-        MyPromise.resolve(lists[i]).then((value) => {
+      let count = 0;
+      for(let [i, p] of lists.entries()) {
+        MyPromise.resolve(p).then((value) => {
           results[i] = value;
-          if(results.length === lists.length) resolve(results);
-        }, (error) => {
-          reject(error);
+          count ++;
+          if(count === lists.length) resolve(results);
+        }, (err) => {
+          reject(err);
         })
       }
     })
@@ -179,3 +181,12 @@ class MyPromise {
 
 
 
+
+
+
+
+let arr = ['a', 'b', 'c']
+// console.log(arr.entries())
+for(let [i, p] of arr.entries() ) {
+  console.log([i, p])
+}

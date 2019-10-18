@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>React App</title>
+  </head>
+  <body>
+    <div id="root">111</div>
+    <a href="#/home">首页</a>
+    <a href="#/about">关于</a>
+    <div id="contain"></div>
+    <script>
+      // 前端路由特点 切换路径的时候，页面不刷新 但是可以根据路径的不同显示页面内容
+      // hash不是浏览器规范 兼容性比较好 但是不美观
+      
+      // 初始化hash 在进行hash赋值的时候，不需要加#号，直接给#后面的就行
+      window.location.hash = window.location.hash.slice(1) || '/'   // 刚进来的时候，是不会触发hashchange事件的
+      document.getElementById('contain').innerHTML = window.location.hash;
+      window.addEventListener('hashchange', function() {
+        document.getElementById('contain').innerHTML = window.location.hash;
+      }, false)
+    </script>
+  </body>
+</html>

@@ -1,3 +1,10 @@
+new实现
+function MyNew(fn, ...args) {
+  let obj = Object.create(fn.prototype);
+  let result = fn.apply(obj, args);
+  return result instanceof Object? result : obj;
+}
+
 call apply实现
 call/apply
 var a = 1;
@@ -7,6 +14,7 @@ function fn() {
 fn.call(null) 
 fn.call(undefined)
 ** 当call传入null/undefined的时候，此时函数的this指向window，所以可以获取到全局环境中的变量
+** 当传入的是其他简单数据类型会被Object()转换为对象
 
 Function.prototype.myCall = function (context, ...args) {
   context = context == null ? window : Object(context);
@@ -245,6 +253,10 @@ weakMap key只能是对象
 
 
 proxy定义拦截
+proxy让我们以简洁易懂的方式控制了外部对对象的访问
+proxy类似设计模式中的代理模式，通常应用于三个方面
+1.拦截和监视外部对对象的访问
+
 Object.defineProperty
 1.需要遍历添加每一个key，只有已经添加进监听的属性才能起作用
 
@@ -261,7 +273,6 @@ let proxy = new Proxy(obj, { 创建一个代理会返回一个obj的代理对象
 
 如果代理的是数组，进行数组的操作的时候
 
-您好 我媳妇现在已经怀孕27周，在22周的时候做了一次促甲状腺激素的检查，当时值是2.8，感觉在正常值范围内就忽略了，今天得知孕妇促甲状腺激素必须要在2.5以下，我想问一下现在这个2.8的值对胎儿有影响吗
 
 
 

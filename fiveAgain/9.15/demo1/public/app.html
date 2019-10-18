@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div id="title"></div>
+  <script>
+    const UPDATE_TITLE_TEXT = 'update_title_text';
+    const UPDATE_TITLE_COLOR = 'update_title_color';
+    /**
+     * state直接暴露在全局中可以被随意修改
+     * 解决办法: 
+       1. 将全局环境中的store放在一个函数中，充当是有变量，
+       2. 暴露出一个获取函数getState，一个修改函数dispatch
+     * 每次修改都需要dispatch函数执行传入一个action
+     * action 是一个纯对象new Object() 或者{}
+     * action 有两个属性 type: 表示当前action的类型 payload: action携带的数据
+     * 如何修改? dispatch触发reducer函数的
+     */
+
+     
+
+    
+
+
+
+
+
+
+    /**
+     * state可以直接暴露在全局中，可以被随意修改 
+     * 解决这个办法分为两步 
+     * 1. 将state放在一个函数中，称为函数的局部变量，函数执行通过特定的方式获取当前的state
+     * 2. 每次修改必须派发一个action,通过特定的action的类型来修改特定的状态
+     * action必须具备type属性，描述当前action类型，还可以有一个payload属性，携带数据
+     * 
+     */
+    let initialState = {
+        title: {
+        color: 'red',
+        text: 'title'
+        }
+      }
+
+    function reducer(state = initialState, action) {
+      switch(action.type) {
+        case UPDATE_TITLE_COLOR:
+          return {...state, title: {...state.title, color: 'green'}};
+        case UPDATE_TITLE_TEXT:
+          return {...state, title: {...state.title, text: 'green'}};
+        default: 
+          return state;
+      }
+    }
+
+    function createStore(reducer) {
+      let state;
+
+      function getState() {
+        return state;
+      }
+
+      function dispatch(action) {
+        state = reducer(state, action)
+      }
+      dispatch(state, {type: '@@REDUX/INIT'})
+      return {
+        getState,
+        dispatch
+      }
+    }
+
+    let store = createStore(reducer);
+
+
+    function render(appState) {
+      renderTitle(appState.title)
+    }
+
+    function renderTitle(title) {
+      let ol = document.getElementById('title');
+      ol.style.color = title.color;
+      ol.innerHTML = title.text;
+    }
+
+    render(store.getState());
+
+  </script>
+</body>
+</html>
+

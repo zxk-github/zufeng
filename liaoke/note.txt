@@ -1,0 +1,254 @@
+react核心 
+虚拟DOM和diff算法
+
+虚拟DOM
+概念:react将真实的DOM抽象为虚拟DOM。虚拟DOM其实就是一个js对象，使用这个对象来描述真实的DOM结构，通过前后对比两个虚拟DOM的差异，最终把变化的部分重新渲染，降低浏览器内存开销，提高渲染效率
+为什么使用？
+对于浏览器中DOM来说，当DOM发生更改时，需要遍历DOM对象的属性，而原生DOM可便利属性多达200多个，并且大部分属性和渲染无关，导致更新代价太大
+虚拟DOM的处理方式
+1.用js对象结构表示DOM树的结构，然后用这个树构建一个真正的DOM树 插到文档中
+2.当状态发生变化的时候，重新构造一颗新的对象树，然后用新的树和旧的树进行对比，记录两棵树的差异
+3.把记录的差异应用到步骤1所创建的真正的DOM树中，视图就更新了
+
+diff算法
+概念
+当使用react在render()函数创建一颗react元素树，在下一个state或者props更新的时候，render()函数将会创建一颗新的react元素的树，react将对比这两颗树的不同之处，计算出如何高效更新UI，做到最小开销的只更新变化的位置，这个对比采用的就是diff算法
+
+状态组件和无状态组件之间区别就是是不是有state属性
+
+什么是state
+react将组件看成是一个状态机，通过状态(state)去操作状态机，通过状态的变化改变页面
+在开发中，通过与用户的交互，实现不同状态，然后渲染UI，让用户界面和数据保持一致
+react中只需要修改组件的状态，根据新的状态去渲染界面
+组件状态发生变化，在内存中就会创建一个新的DOM树，和原来旧的DOM树进行对比，把不同的更新掉，最终渲染到页面中
+
+this指向
+法1: 
+<button onClick={this.click}></button>
+click = () => {
+}
+
+<button onClick={() => this.click}></button>
+click() {
+}
+
+constructor() {
+  this.click = this.click.bind(this);
+}
+<button onClick={this.click}>click</button>
+
+<button onClick={this.click.bind(this)}>
+click() {
+}
+
+
+props和state区别
+props 用来父组件向子组件传递值的
+state 用来在组件中定义状态，通过状态的改变来改变组件
+
+单组件的props 和 state
+界面中需要改变的属性都要写到state中，不需要改变的写到props中
+1.单组件中，props一般用于接受外部传入数据，state则用于记录组件内部数据，而且是需要经常改变的数据
+2.state是组件内部的状态，不能直接记性修改，必须调用setState方法来改变状态的值，从而达到更新组件内部数据的作用
+3.props更多的是用在组件间数据的传递，props同样也可以传递state，由于react数据流是自上而下的，所以父组件向子组件进行传递，另外组件内部的this.props属性是只读的，不可修改
+
+ref的使用
+定义
+ref提供一种方式，用于访问在render方法中创建的DOM节点或者react元素
+使用场景
+1.处理焦点，文本选择或者媒体控制的时候
+2.触发强制动画的时候
+3.继承第三方DOM库，需要进行一些直接DOM操作的时候
+使用
+1.创建ref   
+this.myInput = React.createRef();
+
+<input ref={this.myInput}>
+
+click() {
+  console.log(this.myInput)
+}
+
+react组件生命周期
+前言
+组件的生命周期可以帮助我们清楚的剖析一个组件从创建到销毁的全部流程
+如果能够做到知其然且知其所以然，那么在后期多组件、中大型项目开发中，就能够很好的把控项目的性能细节
+
+// 将组件从容器中卸载掉
+ReactDOM.unmountComponentAtNode(document.getElementById('app'))
+
+虚拟DOM和diff算法是React中非常核心的两个概念，我们需要对此有一个全面的认知
+这对于我们使用脚手架开发项目，尤其是企业中前后端分离的项目有很大帮助
+
+虚拟DOM
+内部执行流程
+1.用javascript对象接口表示DOM树的结构，然后用这个树构建一个真正的DOM树，插入到文档中
+2.当状态变更的时候，重新构造一棵树的对象树，然后用新的树和旧的树进行比较，记录两棵树的差异
+3.把步骤2所记录的差异应用到步骤1所构建的真正的DOM树上，视图就更新了
+
+既然操作DOM运行速度很耗费性能，那就在js和DOM之间加一个缓存，js只用来操作虚拟DOM，最后把变更结果写入DOM中
+
+初始化阶段
+constructor
+static getDerivedStateFromProps()
+componentWillMount()/UNSAFE_componentWillMount()
+render()
+componentDidMount()
+
+更新阶段
+props或state的改变可能会引起组件的更新，组件重新渲染的过程会调用以下方法
+componentWillReceiveProps()
+UNSAFE_componentWillReceiveProps()
+static getDerivedStateFromProps()
+shouldComponentUpdate()
+componentWillUpdate()/UNSAFE_componentWillUpdate()
+render()
+getSnapshotBeforeUpdate()
+componentDidUpdate()
+
+卸载阶段
+componentWillUnmount()
+卸载方式
+
+错误处理
+componentDidCatch()
+
+constructor(props)
+1.react组件的构造函数，在挂载之前被调用，在实现React.Component构造函数时，需要先来添加其他内容前，调用super(props)，用来将父组件传来的props绑定到这个类航，使用this.props将会得到
+2.constructor中应当做一些初始化行为，比如：初始化state，将时间处理函数绑定到类实例上，但是不要使用setState(),如果不需要初始化state或者绑定方法，则不需要constructor，或者可以把这个组件换成纯函数写法
+3.可以利用props初始化state，在之后修改state不会对props造成任何修改，但仍然建议提升到父组件中，或使用redux统一状态管理
+4.官方建议不要再constructor中引入任何具有副作用和订阅功能的代码，这些应当在componentDidMount中写入
+
+getDerivedStateFromProps(nextProps, prevState)
+1.getDerivedStateFromProps在组件实例化后，或者接受新的props后被调用，他返回一个对象来更新状态，或者返回null表示新的props，不需要任何state的更新
+2.如果是由于父组件的props更改，所带来的重新渲染，也会触发此方法，调用setState不会触发getDerivedStateFromProps
+
+componentWillMount/UNSAFE_componentWillMount
+
+render()
+render()方法是必需的，当被调用时，将计算this.props和this.state，并返回以一种类型
+a. React元素，通过jsx创建，即可以是dom元素，也可以是用户定义的组件
+b. 字符串或数字，他们将会以文本节点形式渲染到dom中
+c. Portals,react16版本中提出的新的解决方案，可以是组件脱离父组件层级直接挂载在DOM树的任何位置
+d. null什么也不渲染
+e. 布尔值,什么也不渲染，通常后面跟组件进行判断
+f. 当返回null,false的时候，ReactDOM.findDOMNode(this)将会返回null，什么也不会执行
+**
+render()方法必须是一个纯函数，不能在里面改变state，也不能直接和浏览器进行交互，而是应该将事件放到其他生命周期中。如果shouldComponentUpdate()返回false，render()不会被调用
+
+componentWillReceiveProps
+官方建议使用getDerivedStateFromProps函数代替componentWillReceiveProps
+1.当组件挂载后，接收到新的props后，会被调用，如果需要更新state来响应props的更改，则可以进行this.props和nextProps的比较，并在此方法中使用this.setState(),如果父组件会让这个组件重新渲染，即使props没有改变，也会调用这个方法
+2.react不会在组件初始化props时调用这个方法，调用this.setState也不会触发
+
+shouldComponentUpdate(nextProps, nextState)
+
+getSnapshotBeforeUpdate
+在react render后的输出被渲染到DOM之前被调用，它让组件能够在他们被潜在更改之前捕获当前值，比如滚动位置，这个生命周期返回的任何值，都将作为参数传递给componentDidUpdate
+
+componentDidUpdate
+1.调用shouldComponentUpdate, 可以让react知道组件的输出是否受state和props的影响。默认每个状态的更改都会重新渲染，大多数情况下应该保持这个默认行为。在渲染新的props或state前，shouldComponentUpdate会被调用, 默认为true。这个方法不会在初始化时被调用，也不会在forceUpdate()时被调用。返回false不会阻止子组件在state更改时重新渲染。
+2.如果shouldComponentUpdate()返回false，componentwillupdate,render和componentDidUpdate不会被调用。在未来版本，shouldComponentUpdate()将会作为一个提示而不是严格的指令，返回false仍然可能导致组件的重新渲染。官方并不建议在shouldComponentUpdate()中进行深度查询或使用JSON.stringify()，他效率非常低，并且损伤性能。
+
+模块化 组件化 工程化
+
+jquery是命令式开发
+直接操作DOM
+写一个页面告诉DOM，要如何一步步去操作，大部分都是在写DOM
+
+react和vue都是声明式开发
+面向数据开发
+相当于盖房子把图纸画好，react根据图示帮助我们自动的构建DOM
+节约大量DOM操作
+
+单向数据流
+为了防止多个子组件同时修改数据，数据在哪里，方法就应该在哪里
+
+react是视图层框架 函数式编程
+
+props state和render的关系
+当组件的state或者props发生改变的时候，render就会重新执行，界面就会重新渲染
+当父组件的render函数执行时，其子组件的render函数都会被重新渲染
+
+redux-thunk
+redux-thunk中间件可以让action创建函数不仅仅返回一个action对象，也可以返回一个函数
+主要用来处理redux中复杂的逻辑，比如异步请求
+
+redux-saga
+用于管理redux应用异步操作的中间件，redux-saga通过创建sagas将所有异步操作收集在一个地方集中处理，可以用来替代redux-thunk中间件
+
+react-redux
+why
+避免redux中store全局化，把store直接集成到react应用的顶层props里面，方便各个子组件能访问到顶层props
+解决手动监听state中数据改变(store.subscribe(render));
+
+核心
+Provide和connect方法
+Provide
+将顶层组件包裹在Provider组件之中
+所有组件就处于react-redux的控制之下了。store作为参数放到Provider组件中，方便其中所有子组件调用
+结构
+<Provider store={store}>
+  <组件 />
+</Provider>
+目的 使得所有组件都能够访问redux中的数据
+
+connect 在组件和store之间建立关联，包括如果把store的状态转换成props
+语法
+connect(mapStateProps, mapStateDispatch)(MyComponent);
+
+mapStateProps 
+将state映射到props中，意思就是把Redux中的数据映射到React中的props中去
+映射
+const mapStateProps = (state) => {
+  return {
+    todos: state.todos
+  }
+}
+渲染
+this.props.todos
+目的
+将Redux中的state变成React中的props
+
+mapStateDispatch
+将各种dispatch也变成props,在组件中可以直接使用
+
+react-router
+react-router 是浏览器和原生应用通用部分
+react-router-dom 是用于浏览器的
+react-router-native 是用于原生应用的
+
+4.X特性
+1.路由不再集中在一个文件，它成为应用布局、UI的一部分
+2.浏览器用的router在react-router-dom里，所以，浏览器里使用的时候只需要import react-router-dom就可以了
+3.增加BrowserRouter和HashRouter
+4.V4的路由默认不再排他，会有多个匹配，而V3是默认排他的，只会有一个匹配被使用
+5.不再使用(props.children)来处理嵌套的路由
+
+Route组件
+通过Route组件可以在需要匹配某个路径的时候，绘制一个组件
+<Route exact path="/" component=(MainPage)>
+常用属性
+path属性，字符串类型，他的值就是用来匹配的一个URL
+component属性 他的值就是一个组件 在path匹配成功之后会绘制这个组件
+exact属性 用来指明这个路由是不是排他的匹配
+strict属性 用来指明路径只匹配以斜线结尾的路径
+
+Link组件
+Link是react router v4特有的组件是用来代替上一版本的acthor link
+使用link可以在React应用的不同页面之间跳转
+与acthor link会重新加载整个页面不同 link只会重新加载页面里和当前url可以匹配的部分
+
+BrowserRouter和HashRouter
+BrowserRouter
+Router接口的实现，使得页面和浏览器的history保持一致；如：window.location
+HashRouter
+也是对Router接口的实现，只是使用的是url的hash部分，比如：window.location.hash
+1）如果是非静态站点，要处理各种不同的url，则需要使用BrowserRouter
+2）如果是静态站点，只需要匹配静态url，则使用HashRouter即可
+
+动态路由
+<Route path="/hot/:hid" component={Hot}>
+对应动态路由加载的组件里获取传值
+this.props.match.params
+

@@ -1,0 +1,408 @@
+boolean 
+true/false
+let a:boolean = true;
+number
+let a:number = 1;
+string 
+let a:string = '1';
+数组
+let a:number[] = [1,2]
+let a: Array<number> = [1,2];
+元组 必须个数和类型对应
+let x:[string, number] = ['1', 2]
+x.push(1) 只要是push string或者number类型，不会报错
+x.push(true) 回报不是string | number类型
+x[2] = 1 这种直接通过下标的形式的赋值，会提示对应下标2不存在元素
+枚举
+enum Color {
+  Red,
+  Blue = 3
+}
+let a:Color = Color.Green;
+let n:string = Color[0] // Red
+any 会跳出类型检查
+let a:any = 1;
+a = '1'
+let a = 1; 
+a = '1' // 会进行类型推断，赋值之后默认a是number类型
+let a:any[] = [1, '1', true]  
+void 和any相反，表示没有任何类型，函数不反回任何值就是void
+function fn():void {
+  console.log(11);
+}
+let a: void = undefined / null; 给变量设置为void类型是没有意义的，并且只能赋值为undefined或者null
+let a: void = undefined / null; 给变量设置为void类型是没有意义的，并且只能赋值为undefined或者null
+undefined / null类型分别就是undefined / null，给变量定义为undefined / null是没有太大意义的，因为只能赋值为undefined / null
+let a:undefined = undefined;
+let a:null = undefined; 
+两者可以相互混着用
+设置strictNullChecks之后，null/undefined就不能赋值给其他类型
+never 表示永远不存在的数据类型，当函数不能返回，或者说函数不能结束，或者专门抛出错误的函数
+never 是任何类型的子类型，是可以赋值给任何类型的，但是没有别的类型是never的子类型，即使any也不能赋值给never类型的变量
+function error(message:string):never {
+  throw new Error(message);
+}
+function infiniteloop():never {
+  while(true) {
+  }
+}
+object 表示非原始类型，除基本数据类型之外的类型(number, string, boolean, undefined, boolean)
+function fn(o: Object) { }
+类型断言
+有时候你会比ts更加知道某一个值的类型，这时候需要忽略编译阶段的检查
+let someValue: any = '1111';
+let strLength:number = (<string>someValue).length;
+let strLength:number = (someValue as string).length;
+
+接口interface
+interface LabelValue {
+  label: string;
+  age: number
+}
+function fn(arg: LabelValue) {}
+可选属性
+interface Square {
+  label: string;
+  age?: number;
+  readonly x: number; // 创建一个只读属性
+}
+interface SquareConfig {
+  
+}
+function create(config: SquareConfig): Square{
+  return{
+    
+  }
+} 
+只读属性
+interface Num {
+  readonly x: number;
+}
+泛型只读数组
+let ra: readonlyArray<number> = [1,2] 定义一个泛型只读数组，不可以增删改，修改length属性
+额外类型检查
+interface LabelValue{
+  width: number
+}
+let a = {width: 100, size: 100};
+function fn(arg: LabelValue) {}
+fn(a)  这时候不会报错
+function fn({width: 100, size: 100}){} 这时候会报错
+因为在传入变量的时候，ts不会进行类型检查，但是在传入字面量的时候，会进行类型检查
+解决办法
+1 类型断言
+function fn({width: 100, size: 100} as LabelValue){}
+2.添加字符串的签名索引
+interface LabelValue{
+  width: number;
+  [propName: string]: any;
+}
+3.参数赋值在一个变量上，然后传入变量
+接口描述函数类型
+interface SearchFn{
+  (source: string, substring: string): boolean
+}
+let fn: SearchFn = function(sou: string, sub:string):boolean {
+  return true;
+}
+数组索引
+interface StringArray {
+  [index: number]: string;
+}
+let a: StringArray = ['a', 'b'];
+let str:string = a[0];
+定义索引类型之后，如果再单加属性，这时候值的类型应该和索引类型值类型相同
+interface NumberIndex {
+  [index: string]: number;
+  length: number;
+  name: string; // 这里报错
+}
+interface ReadonlyArray {
+  readonly [index: number]: string;
+}
+使用接口强制一个类符合某种契约,但是仅仅检查的是类的公共部分，不会检查类的私有成员的
+interface ClockInterface{
+  currentTime: Date;
+  setTime(d: Date);
+}
+// 构造器签名
+interface ClockConstructor {
+  new(hour: number)
+}
+class Clock implements ClockInterface{
+  currentTime: Date; 实例部分类型
+  constructor(){}   // 静态部分的类型
+  setTime(d: Date) { 实例部分类型
+    this.currentTime = d;
+  }
+}
+类分为两个部分，实例部分类型和静态部分类型
+一个类实现某一个接口的时候，只会检查实例部分，静态部分是不会进行检查的
+使用的正确姿势
+interface ClockInterface{
+  tick():viod; 
+}
+interface ClockConstructor{
+  new(hour: number): ClockInterface
+}
+function createClock(cons: ClockConstructor, hour: number): ClockInterface{
+  constructor(hour: number) {
+
+  }
+  tick() {
+    console.log(1);
+  }
+}
+class AnalogClock implements ClockInterface{
+  constructor(h: number) {}
+  tick(){
+    console.log(11);
+  }
+}
+let digital = createClock(AnalogClock, hour: 12)
+
+// 接口之间的继承
+interface Shape{
+  Color: string
+}
+interface Square extends Shape, Shape2{  // 接口可以一次继承多个接口
+  sideLength: number
+}
+let squre = {} as Square; // 通过这种断言的形式，这个对象就有了上面两个属性
+squre.color = 'blue'
+squre.sideLength = 10
+
+混合类型
+interface Counter{
+  (start: number): string;  // 这个是啥意思
+  interval: number;
+  reset(): void
+}
+function getCounter(): Counter{
+  let counter = (
+    function (start: number) {
+
+    }
+  ) as Counter
+  counter.interval = 123;
+  counter.reset = function(){}
+  return counter
+}
+
+接口继承类
+当一个接口继承一个类的时候，他会继承这个类的成员，但是不包括他的实现，就类似接口实现了类的所有成员，但是不包含类
+接口同样会继承到类的private和protected成员，这个时候这个接口的类型只能被这个类或者其子类所实现
+接口继承类，就会继承类的私有成员
+class Control{
+  private state: any;
+}
+interface SelectControl extends Control{
+  select()
+}
+class Button extends Control implements SelectControl{
+  select(){}
+}
+
+class TextBox extends Control{
+  select(){}
+}
+class ImageC implements SelectControl{
+  select(){}  //报错 因为这个类没有继承Control,但是却实现SelectControl， 因为实际上是缺少state属性的
+}
+
+class Animal() {
+  move() {
+
+  }
+} 
+class Dog extends Animal{
+  move() {
+    super.move()
+  }
+}
+
+private
+protected
+public
+readonly
+class Person{
+  readonly name: string;
+  constructor(name: string){}
+}
+class Person{
+  constructor(readonly name: string){}
+}
+// 存取器
+let password = '123'
+class Emploee{  
+  private _fullName: string;
+  get fullName():string {
+    return this._fullName;
+  }
+  set fullName(newName: string) {
+    if(password === '123') {
+      this._fullName = newName
+    } else {
+      console.log(11)
+    }
+  }
+}
+静态属性
+class Person{
+  state getFullName: string;
+  fullName() {
+    return Person.getFullName; // 通过类的本身访问到类的属性
+  }
+}
+抽象类:一般作为派生类的基类使用，他们不能直接被实例化
+abstract class Animal{ 抽象类
+  abstract makeSound(): viod;  抽象方法
+  mave(): void{
+    console.log('11')
+  }
+}
+抽象类中的方法必须有一个具体实现，但是抽象方法没有具体实现，子类中必须有具体实现
+将一个变量设置为抽象类的类型，变量只能当问抽象类中的方法和属性
+class Person{
+  state getFullName: string;
+  fullName() {
+    return Person.getFullName; // 通过类的本身访问到类的属性
+  }
+}
+let personMaker:typeof Person = Person;
+personMaker.getFullName = 12;
+
+interface Point{
+  x: number;
+}
+interface Point3D extends Point{
+  z: number
+}
+
+函数
+function fn(first: string, ...rest: string[]) {
+
+}
+
+泛型 创建可重用组件
+class Gen<T>{
+  value: T,
+  add: (x: T, y: T) => T
+}
+let a20 = new Gen<number>();
+a20.value = 1;
+a20.add = function() {
+
+}
+
+function logs<T>(arg: T): T{
+  console.log(arg.length)//这个位置回报错，因为并不是所有类型都有length属性的
+}
+
+// 解决办法:通过给泛型函数定义一个约束
+interface LengthWise{
+  length: number;
+}
+function logs<T extends LengthWise>(arg: T): T {
+  console.log(arg.length)
+}
+logs({length: 1})
+
+function getProperty<T, K extends keyof T>(obj: T, key: K) {
+  return obj[key];
+}
+
+// 工厂函数中的使用
+function create<T>(C: {new(): T}): T{
+  return new C()
+}
+
+class LionKeeper{
+  lionKeeper: numebr
+}
+class Animal{
+  numLength: number
+}
+class Loin extends Animal {
+  keeper: LionKeeper
+}
+function createInstrance<T extends Animal>(C: new() => T) {
+  return new C();
+}
+createInstrance<Loin>(Loin);
+
+类型推断
+交叉类型: 集中类型之和
+将多个类型合并成一个类型，在大多数混入或者一些不好进行类型推断的地方使用
+function extend<T, U>(first: T, second: U): T & U { // 返回值是T或者U
+  let result = {} as T & U;
+  for(let id in first){
+    result[id] = first[id] as any;
+  }
+  for(let id in second) {
+    if(!result.hasOwnProperty(id)) {
+      result[id] = second[id] as any
+    }
+  }
+  return result;
+}
+
+联合类型:表示一个值可以是集中类型之一
+var a: string|number = '1'; 
+获取属性只能是直接使用公共属性
+interface Bird{
+  fly(),
+  layEggs()
+}
+interface Fish{
+  swim(),
+  layEggs()
+}
+function get(): Bird | Fish{
+
+}
+let a = get();
+a.layEggs()
+a.fly() // 会报错 因为联合类型只能访问公共属性或者方法
+
+类型保护
+类型保护机制
+1.类型位词
+function isFish(pet: Fish|Bird): pet is Fish {
+  return (pet as Fish).swim !== undefined;
+}
+if(isFish(pet)) {
+  pet.swim()
+} else {
+  pet.fly()
+}
+
+2. typeof
+function isNum(x: any): x is number {
+  return typeof x === 'number'
+}
+function pad(panding: string|number) {
+  if(isNum(panding)) {
+    return true;
+  } else {
+    return false
+  }
+}
+
+3. instanceof
+if(a instanceof bird) {
+  a.fly()
+}
+
+function fn(a: string|null) {
+  a.length 会报错因为可能是null
+  a!.length 不会报错 采用类型断言 明确告诉编译器器，当前变量不为null
+}
+
+
+
+
+
+
+
+

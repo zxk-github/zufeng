@@ -1151,6 +1151,52 @@ function Counter(props) {
 redux 中央状态管理工具
 创建一个仓库，里面有应用唯一的状态，任何组件都可以从状态中取值，任何一个组件也都可以改变状态的值
 redux中，状态只有一个，状态树也只有一个，仓库也只有一个
+redux将整个应用的状态存储到一个地方，称为store
+里面保存着一颗状态树 state tree
+组件可以派发dispatch为action给store,而不是直接通知其他组件
+其他组件可以通过订阅store中的状态(state)来刷新自己的视图
+
+redux三大原则
+1. 整个应用的state被存储在一颗object tree中，并且这个object tree只存在于唯一store中
+2. store是只读的，唯一改变state的方法就是触发action, action是用于描述已发生事件的普通对象，使用纯函数和来执行修改，为了描述action如何改变state tree,你需要编写reducers
+3. 单一数据源的设计让react组件之间通信更加方便，同时也便于状态的统一管理
+
+组件订阅仓库变化事件，当仓库发生变化的时候，会重新获取一次数据，改变组件状态
+
+bindActionCreators 
+
+combineReducers 将多个reducer进行合并，每一个单独的reducer负责自己的一个组件
+
+redux中间件
+中间件: 派发action之后，到达reducer之前可以加上中间件，拦截dispatch，增强dispatch的功能
+
+
+前端路由
+1. hash 切换路径 不刷新页面，但是可用通过路径显示不同的内容 
+hash不是浏览器规范，优点：兼容性好 缺点：不美观
+
+window.addEventListener('hashchange', function() {
+
+}, false)
+但是在路由进行第一次变化的时候不会触发hashchange事件，所以增加一步初始化路径
+
+npm install react-router-dom 
+
+webpack 插件 history-fallback-api 如果路径找不到会跳转到首页
+import { BrowserRouter } from 'react-router-dom'
+import { HashRouter } from 'react-router-dom'
+
+组件中可以通过this.props获取到当前组件的信息
+this.props.history 获取路由的操作方法
+this.props.location 获取到当前路由的信息
+this.props.match 当前路由匹配到的信息
+
+
+connected-react-router
+
+将路由信息同步到redux仓库中
+乐意在action creator 通过派发action的方式跳转路径
+
 
 
 

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>React App</title>
+  </head>
+  <body>
+    <a onClick="push('/')">首页</a>
+    <a onClick="push('/about')">关于</a>
+    <div id="container"></div>
+    <div id="root"></div>
+
+    <script>
+      console.log(1);
+      // window.history.pushState(参数，名称，url) 会在history栈中添加历史记录，浏览器地址栏会变成push进去的url，但是页面并不会刷新
+      // 如果服务器上找不到对应的路径，那就直接跳转到首页，并且再让首页跳转到这个路由
+      // 默认浏览器的前进 后退是不会触发pushState方法的
+      function push(path) {
+        history.pushState({}, null, path);
+        document.getElementById('container').innerHTML = path;
+      }
+      window.addEventListener('popstate', function() {
+        console.log(1111);
+        // window.location  和路径相关的信息
+        // window.history 历史管理的方法 
+        document.getElementById('container').innerHTML = window.location.pathname;
+      })
+    </script>
+  </body>
+</html>
