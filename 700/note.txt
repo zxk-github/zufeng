@@ -1,0 +1,63 @@
+元素视图属性
+offsetWidth width+padding+border
+offsetHeight height+padding+border
+
+clientWidth width+padding
+clientHeight height+padding
+
+offsetTop 获取元素到定位父节点的top方向的距离
+offsetLeft 获取元素到定位父节点的left方向的距离
+
+scrollWidth 获取元素的真实宽度 内容不超过盒子宽度时为盒子的clientwidth
+scrollHeight 获取元素的真实高度 内容不超过盒子的高度时为盒子的clientHeight 
+
+window视图属性
+IE(以上)
+innerWidth 浏览器窗口可视区(不包括控制台，菜单栏，工具栏)
+innerHeight
+
+document文档视图
+低版本IE innerWidth innerHeight替代方案
+document.documentElement.clientWidth
+document.documentElement.clientHeight
+
+document.documentElement.offsetHeight 获取整个文档的高度(包括body的margin)
+document.body.offsetHeight 获取整个文档的高度(不包含body的margin)
+
+http缓存
+
+http状态码
+200 请求成功
+202 服务器接受请求，但是尚未处理
+206
+301 永久重定向，改资源已经被永久移动到某一个位置
+302 临时重定向
+304 上次请求之后，该资源没有被修改过
+401 请求未授权
+403 没有权限，禁止访问
+404 找不到和url对应的资源
+500 后端错误
+503 服务器宕机
+504 网关错误
+
+
+ajax是什么？ajax交互模型，同步和异步值啊斤的区别，如何解决跨域
+ajax的全称是JavaScript和xml。是一种快速创建动态的技术，通常用于前后端的数据交互，实现网页异步更新，在不重新加载整个界面的情况下做到网页的部分刷新
+ajax交互模型
+  用户发起异步请求
+  创建XMLHttpRequest对象
+  告诉 XMLHttpRequest 对象哪个函数会处理 XMLHttpRequest 对象状态的改变，为此要把对象的 onReadyStateChange 属性设置为响应该事件的JavaScript 函数的引用
+  创建请求，用 open 方法指定是 get 还是 post ，是否异步， url 地址;
+  发送请求， send 方法
+  接收结果并分析
+  实现刷新
+同步:脚本会停留并等待服务器发送回复然后再继续 
+异步:脚本允许页面继续其进程并处理可能的回复
+
+跨域
+使用 document.domain+iframe 解决跨子域问题 
+使用 window.name
+使用 flash
+使用 iframe+location.hash
+使用 html5 的 postMessage 
+使用 jsonp (创建动态 script )

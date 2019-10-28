@@ -1198,5 +1198,436 @@ connected-react-router
 乐意在action creator 通过派发action的方式跳转路径
 
 
+vue
+data: {
+    array: [1, {value: 1}]
+}
+data属性是数组，数组中单个值发生变化的时候，不会更新视图，必须调用数组的方法
+但是值是对象，对象的值发生的时候会更新视图
 
+el 代表当前元素
+binding 绑定属性
+vnode 虚拟节点 vnode.context上下文，当前指令所在的上下文
+Vue.directive('focus', function(el, bindings, vnode) {
+    // 此方法默认只在绑定和指令依赖的数据修改的时候，才会执行
+})
+bind--> inserted  updated --> unbind
+Vue.directive('focus', {
+    bind: function(el, bindings, vnode) {},
+    update: function(el, bindings, vnode) {},
+    inserted(el, bindings, vnode) {  // 当指令对应的元素插入到页面中的时候执行这个函数
+        if(binding.modifiers.color) {
+            el.style.background = binding.value
+        }
+    }, 
+    unbind() { //指令销毁的时候，会触发这个函数
+
+    }
+})
+
+v-click-outside
+Vue.direative('clickOutside', {
+    bind(el, bindings, vnode) {
+        el.fn = function(e) {
+            if(el.contains(e.target)) {
+                vnode.context['focus']();
+            } else {
+                vnode.context['blur']();
+            }
+        }
+        document.addEventListener('click', el.fn);
+    },
+    unbind(el) {
+        document.removeEventListener('click', el.fn)
+    }
+})
+
+computed && watch
+computed 会根据其他的来计算出一个结果
+watch 监控某一个值的变化
+但是这两个都基于vm.$watch
+
+watch: {
+    name() {
+
+    }
+}
+// 当一个值变化的时候，可以做一件事
+watch: {
+    name: {
+        handler() {
+
+        },
+        immediate: true // 立即执行handler(默认第一次不会执行))
+        deep: true //深度监控
+        lazy: true // 就是computed的实现
+    }
+}
+
+let dirty = true
+function initComputed(key, handler) {
+    let value;
+    Object.defineProperty(vm, key, {
+        get() {
+            if(dirty) {
+                value = handler()
+                dirty = false;
+            }
+            return value;
+        }
+    })
+}
+
+initComputed('fullname', () => {
+    console.log('刷新')
+    return vm.name + 'jw'
+})
+// 计算属性最大特点就是可以缓存
+vm.fullname
+vm.fullname
+vm.name = 'jw';
+dirty = true;
+console.log(vm.fullname)
+
+computed 多次取值存在缓存的，如果依赖的属性没有变化，就不会执行
+watch 每次值都变化之后，会执行对应的回调
+methods 没有缓存，每次页面渲染 都会执行函数
+
+computed get/set
+computed: {
+    checkAll() {  //默认只有get
+        return this.checks.every(check => check.value)
+    },
+    checkAll2: {
+        get() {
+            return this.checks.every(check => check.value)
+        },
+        set(newValue) {  
+            this.checks.forEach(check => {
+                check.value = newValue;
+            })
+        }
+    }
+}
+
+
+动画
+v-if v-for v-show 路由切换 上面这四个一般会触发动画
+
+v-enter 控制起点
+v-enter-active 控制过程
+v-enter-to 控制终点
+v-leave 
+v-leave-active
+v-leave-to
+
+
+.v-enter {
+    // 进入的时候的状态
+}
+.v-enter-to{
+    动画的过程设置
+}
+.v-enter-active {
+    动画结束终点的状态设置
+}
+.v-leave {
+    进入离开时候的状态
+}
+.v-leave-active {
+    离开时候的动画
+}
+.v-leave-to{
+    动画终止状态
+}
+最后消失
+<transition>
+
+</transition>
+
+v-on:before-enter="beforeEnter"
+v-on:enter="enter"
+v-on:after-enter="afterEnter"
+v-on:enter-cancelled="enterCancelled"
+
+v-on:before-leave="beforeLeave"
+v-on:leave="leave"
+v-on:after-leave="afterLeave"
+v-on:leave-cancelled="leaveCancelled"
+
+vue生命周期
+beforeCreate 
+初始化生命周期，初始化自己的一套发布订阅，所有this.$xxx会被到vue实例上，但是数据相关的没有值。
+这个生命周期中获取不到data中的数据，此时$data是undefined, watch conputed methods都没有
+事件相关的已经初始化好了($on #emit $once $destroy $nextTick $mount)
+使用: 混合 可以在每个组件中添加一些特定属性可用
+$children $parent能获取到吗？？？父组件什么时候可以看到子，子什么时候可以看到父
+子在beforeCreate就能看到$parent，在子级的
+父在beforeMount的时候才能看到子，也就是说此时访问this.$children才能获取到子
+初始化注入&校验
+beforeCreate 到created是一个同步的过程，假如在beforeCreate中有异步逻辑，是不会等待的
+
+created 
+实例已经创建完成之后被调用，在这一步，实例已完成以下的配置，
+已经实现了数据劫持(data observer)，属性和方法 watch comnputed都可以获取到，watch/event事件回调，
+此时组件没有被挂载在页面上所以这里没有$el $refs 获取不到真实的DOM元素
+
+配置项中没有写template，会将el外部的HTML作为template编译
+编译完成之后 都会变成render函数
+当render函数和template同时存在的时候，会忽略template
+
+beforeMount 
+beforeMount调用之后 调用render方法
+这个时候不能获取到全部的子组件,this.$children依旧是一个空数组
+
+在进行虚拟DOM解析的时候，会找到所有的子组件，所以子组件的所有生命周期会在这个期间执行，这也是为啥是为什么beforeMount里获取到$children依旧是空数组的原因
+
+mounted 当前组件挂载完成
+这时候获取到的都是真实的dom vm.$el可以获取值
+this.$children此时也可以获取到子级组成的数组
+
+操作DOM只能在mounted中进行
+
+vue的更新方式是组件级的，当前组件数据变化了，只会更新当前组件，然后异步渲染(更新数据之后，立刻是获取不到改变之后的DOM元素的，需要在下一个事件环才能拿到))
+组件化的好处就是，方便维护，减少不必要的渲染
+
+beforeUpdate 
+1.在这里增加一些数据更新，不会导致视图的多次更新
+2.更新的数据必须在视图上应用了，更新数据，才会触发数据的更新
+数据更新时调用，发生在虚拟DOM重新渲染和打补丁之前
+updated 
+更新完成，不要再更新数据，有可能会导致死循环
+由于数据更改导致的虚拟DOM重新渲染和打补丁，在这之后会调用该钩子
+
+vm.$destroy 移除所有观察者，移除监听事件
+1.手动移除组件 
+2.路由切换
+v-if 会触发(显示的时候执行组件的所有生命周期钩子，隐藏的时候执行销毁的两个钩子)
+beforeDestroy 
+实例销毁之前调用，在这一步，实例仍然完全可用
+destroy 
+Vue实例销毁后调用，调用后，vue实例指示的所有东西都会解除绑定，所有事件和监听器都会被移除，所有子实例也会被销毁，该钩子在服务端渲染期间不被调用
+
+$mount()可以制定一个元素，不指定元素的话，内部会默认渲染到一个内存中的节点，此时beforeMount还是会执行
+render(h) {
+    return h(Vcom)
+},
+template: '<div>hello</div>'
+到底是template替换render还是不会？？？？？？？
+如果有了render就不会使用template,因为vue内部会把template转换成render函数，内部进行渲染的时候，会执行render函数，但是此时页面依旧没有东西，因为是挂载到内存中了
+document.body.appendChild(vm.$el)  这种就挂载到页面上了
+用法，可以将渲染好的元素插入到自己想要的节点中
+
+
+子组件挂载完成之后 父组件才会挂载
+beforeMounted的时候会检查有没有子组件，如果有就执行子组件的生命周期
+beforeMount 子组件生命周期 mounted
+
+修改父组件数据，让子组件出现
+beforeUpdate
+--> 子组件生命周期钩子
+updated
+
+修改父组件数据，子组件执行
+beforeUpdate
+--> 子组件update
+updated
+
+销毁父组件 
+beforeDestroy
+--> 子组件生命周期
+destroyed
+
+
+
+
+
+
+
+组件
+Vue.component('my', {
+
+})
+直接就可以在模版中使用，不需要进行components注册
+
+props: []
+props: {
+    mys: {
+        type: String, Array Object Number boolean
+        required: true,
+        default: '1',
+        validated: 
+    }
+}
+
+如果是object/array类型, 默认值必须是函数，返回对应的数据类型，每次组件调用都会执行这个函数
+props: {
+    mys: {
+        type: Array,
+        default: function() {
+            return [1,2,3]
+        }
+    }
+}
+
+组件间通信
+给儿子绑定自定义事件
+<Son @change="change"></Son>
+这个时候 是给组件Son绑定了一个change事件
+子组件内的this指定的也是Son实例，this.$emit('change')
+
+1. 直接$emit
+
+2. this.$parent 获取自己父级
+this.$parent.$emit() 孙子直接利用父级的$emit触发父级事件，执行爷爷上面的函数
+
+3. 事件向上传递 
+Vue.prototype.$dispatch = function(eventName, value) {
+    let parent = this.$parent; // 先找第一层的
+    while(parent) {
+        parent.$emit(eventName, value) 触发
+        parent = parent.$parent // 接着向上查找
+    }
+}
+this.$dispatch('change') 自动向上逐级查找change事件，有就触发，不管是谁
+缺点: 会触发父级上的同名事件
+
+4. 事件向下传递，触发所有子组件的eat事件
+Vue.prototype.$broadcast = function(eventName, value) {
+    let children = this.$children;
+    function broad(children) {
+        children.forEach(child => {
+            child.$emit(eventName, value);
+            if(child.$children) {
+                broad(child.$children)
+            }
+        })
+    }
+    broad(children)
+}
+
+this.$broadcast('eat')
+
+5. 语法糖
+<Son :count="count" @update:count='newValue => count = newValue'></son>
+<son :count.sync="count"></son>
+
+在组件中触发的时候因为事件名称固定，所以必须是this.$emit('update:count')
+
+<Son :value="count" @input='newValue => count = newValue'></son>
+<Son v-model="count"></son>
+
+v-model 只能传递value属性，如果只有一个可以使用v-model， 多个依然使用上面的
+son
+props: [value],
+methods: {
+    click() {
+        this.$emit('input', 100)
+    }
+}
+
+6. 如果组件中使用了props就会将attrs从当前的$attrs中移除掉，包含在$attts的属性会显示在DOM属性上
+如果想让$attrs能访问到，并且不再DOM上显示，这时候就需要在配置项中增加inheritAttrs: false
+
+使用案例
+父向子传递了三个属性，子接受了一个使用props，这时候子的$attrs上只存在两个了，可以将剩下的来个传递给孙子
+<groundSon v-bind="$attrs"></groundSon>
+v-bind="$attrs" 将属性全部向下传递
+
+<son @click="show"></son>
+此时的click是自定义事件 仅仅名字和原生的一样
+<son @click.native="show"></son> 这才是原生事件，事件会下放到组件的最外层元素上
+
+$listeners 获取当前组件挂载的所有事件的集合
+向下传递多有事件
+<grandSon v-on="$listeners"></grandSon>
+
+<button @click="$listeners.click"></button>
+
+7.provide inject 组件库多级通信可以使用
+
+provide() {
+    return {
+        vm: this 将父组件自己暴露出去
+    }
+}
+
+子组件
+inject: ['vm'] 向上逐级查找，直到找到某一层父级的provide提供了vm,找到就会立即停止
+console.log(this.vm) 
+
+8. ref获取真实DOM元素，如果放在组件上，获取的是当前组件的实例
+直接可以在父组件中拿到子组件实例
+
+9. eventbus
+
+$parent $children 要想触发方法必须通过对应的组件实例触发对应的事件或者方法
+绑定$on的只能通过绑定$on的那个组件来触发
+
+// 创建一个全局的发布订阅
+Vue.prototype.$bus = function() {
+    return new Vue();
+}
+A组件 
+this.$bus.$on('change', function() {
+    console.log(11);
+})
+
+递归组件
+第一步，给当前组件起一个名字，名字就代表当前组件
+第二步，在当前组件，使用组件名字可以实现当前组件的递归
+
+Vue插件一般使用
+1. 注册全局组件
+2. 注册全局指令
+3. 往原型添加方法、属性
+
+render函数，解决template不灵活问题，递归不方便，功能缺陷问题， 可封装标签组件
+render函数可以用来渲染元素
+
+在.vue文件中有template，所以vue会把template编译好之后，替换到render函数，所以在.vue文件中可以不写template
+只用render函数的组件，可以称之为函数组件
+export default {
+    props: {
+        type: {
+            type: String
+        }
+    },
+    render(h) { // h就是createElement 创建一些vnode render函数执行，返回虚拟节点
+
+        # return h('h1', {}, ['hello', 'hello'])
+        console.log(this) this代表当前使用render的组件实例
+        return h('h1', {}, [this.$slots.default, h('span', {
+            nativeOn: {
+                click() {
+
+                }
+            },
+            attrs: {
+                a: 1
+            }
+        }, 'hello')])
+
+    }
+}
+h(myComponent, {
+    props: {
+        
+    }
+})
+
+
+
+
+
+vuex是什么，如何使用，有哪些使用场景
+vuex的action和mutation区别
+如何解决vuex持久化问题
+
+mutation是同步操作状态的
+action存放的都是一些异步方法
+
+Vue.use(Vuex) 使用这个插件的install方法
+1 使用这个插件的install方法
+2 将创建的store的实例插入到new Vue()中
 

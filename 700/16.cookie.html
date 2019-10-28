@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function setCookie(name, value, expires, path, domain, secure) {
+      var cookieText = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+      if(expires instanceof Date) {
+        cookieText += ';expires=' + expires;
+      }
+      if(path) {
+        cookieText += ';path=' + path;
+      }
+      if(domain) {
+        cookieText += 'domain=' + domain
+      }
+      if(secure) {
+        cookieText += 'secure=' + secure
+      }
+      document.cookie = cookieText
+    }  
+    function getCookie(name) {
+      var cookie = document.cookie;
+      var cookieName = encodeURIComponent(name);
+      let cookieStart = cookie.indexOf(cookieName);
+      if(cookieStart > -1) {
+        let cookieEnd = cookie.indexOf(';', cookieStart);
+        if(cookieEnd === -1) {
+          cookieEnd = cookie.length -1;
+        }
+        return cookie.substring(cookieStart + 1, cookieEnd + 1);
+      } else {
+        return null;
+      }
+    }
+
+    function unsetCookie(name) {
+      document.cookie = `${name}=;expires=${new Date(0)}`
+    }
+  </script>
+</body>
+</html>
+
+<!-- cookie增删改查 -->
