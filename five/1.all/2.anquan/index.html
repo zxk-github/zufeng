@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 将输入框中输入的图片地址的图片显示出来
+    $('add').on('click', function() {
+      $('.box').html(`<img src="${$('#web').val()}"`)
+    })  
+    // 这是一种典型的DOM-Based攻击手段
+    // <img scr="xxx" onerror="alert(1)" id="" />
+    // 如果将xxx" onerror="alert(1)" id="这段脚本放进输入框之后，因为图片地址找不到就会执行onerror事件，这时候就会执行函数
+
+  </script>
+</body>
+</html>

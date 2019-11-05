@@ -6,11 +6,13 @@
       <button @click="action">异步</button>
       <button @click="print">展示</button>
       <hello-word v-if="show"></hello-word>
+      <button @click="mes">谈</button>
   </div>
 </template>
 
 <script>
   import HelloWord from './components/HelloWorld'
+  import {Message} from './message/message'
   export default {
     data() {
       return {
@@ -49,10 +51,16 @@
         this.show = !this.show;
       },
       action() {
-      this.$store.dispatch('async', 1)
+        this.$store.dispatch('async', 1)
       },
       mutation() {
-      this.$store.commit('addA', 1);
+        this.$store.commit('addA', 1);
+      },
+      mes() {
+        Message.success({
+          message: '11111',
+          duration: 1000
+        })
       }
     }
   }

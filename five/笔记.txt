@@ -1,3 +1,8 @@
+基础部分 http://www.javascriptpeixun.cn/course/611/tasks
+vue  https://gitee.com/jw-speed/2019vue
+仓库需要登录 用户名 3028213607@qq.com 密码 zf1234567
+
+
 高阶函数
 如果函数的参数是一个函数，或者这个函数返回一个新的函数，这个函数都叫高阶函数
 
@@ -1439,6 +1444,8 @@ beforeDestroy
 destroyed
 
 
+当vue实例没有进行$mount()或者el属性的时候，只会触发beforeCreate()和create()。也就说实例只会创建，属性挂载成功，但是因为没有页面挂载位置，beforeMount和mounted不会执行
+当vm.$mount()执行的时候，会执行所有的生命周期，此时就是一个完成的DOM元素，但是因为没有实际的挂载点，页面不会显示出来创建的DOM, 此时可以通过$el获取到当前实例所对应的实际js原生DOM元素
 
 
 
@@ -1585,7 +1592,7 @@ Vue插件一般使用
 render函数，解决template不灵活问题，递归不方便，功能缺陷问题， 可封装标签组件
 render函数可以用来渲染元素
 
-在.vue文件中有template，所以vue会把template编译好之后，替换到render函数，所以在.vue文件中可以不写template
+在.vue文件中有template，所以vue会把template编译好之后，替换到render函数，所以可以单独创建一个js，充当函数组件
 只用render函数的组件，可以称之为函数组件
 export default {
     props: {
@@ -1594,7 +1601,6 @@ export default {
         }
     },
     render(h) { // h就是createElement 创建一些vnode render函数执行，返回虚拟节点
-
         # return h('h1', {}, ['hello', 'hello'])
         console.log(this) this代表当前使用render的组件实例
         return h('h1', {}, [this.$slots.default, h('span', {
@@ -1607,7 +1613,6 @@ export default {
                 a: 1
             }
         }, 'hello')])
-
     }
 }
 h(myComponent, {
@@ -1615,6 +1620,25 @@ h(myComponent, {
         
     }
 })
+
+jsx
+<>表示html 如果是js都需要使用{}取值
+methods: {
+    change(e) {
+        this.value = e.target.value
+    }
+},
+render() {
+    let tag = 'h'+this.type
+    return <tag>
+        <input value={this.value} on-input="change">
+    </tag>
+}
+
+domPropsInnerHTML
+
+作用域插槽
+
 
 
 
@@ -1630,4 +1654,32 @@ action存放的都是一些异步方法
 Vue.use(Vuex) 使用这个插件的install方法
 1 使用这个插件的install方法
 2 将创建的store的实例插入到new Vue()中
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

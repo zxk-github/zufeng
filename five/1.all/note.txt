@@ -1,0 +1,219 @@
+lesson1 跨域
+协议 域名 端口一样 才能叫同域
+http://zf.cn:90
+http://zf.cn:81
+
+http://a.zf.cn:90
+http://zf.cn:90
+
+https://zf.cn:90
+http://zf.cn:90
+
+为什么浏览器不支持跨域
+cookie localStorage DOM元素都不支持跨域，都有跨域问题
+防止恶意网站读取cookie
+在一个页面中可以通过iframe引入别人的页面，理论上在同域下是可以操作iframe的 但是跨域不支持，防止跨站操作
+ajax不支持跨域
+
+解决跨域
+- jsonp
+- cors
+- postMessge
+- document.domain 专门用来做子域和父域之间通信
+- window.name
+- location.hash 
+- http-proxy 反向代理
+- nginx 
+- websocket 不存在跨域
+
+同源策略都是ajax  form表单是不存在跨域问题的
+
+link script img 都可以跨域加载资源
+
+jsonp 
+1.只能发送get请求 不支持 post put delete 
+2.并且不安全 容易进行xss攻击 因为如果引入的网站返回的是script标签 就会执行脚本 进行恶意攻击
+
+ajax跨域的请求会到达服务器，只是服务器返回的结果被浏览器屏蔽掉了
+Access-Control-Allow-Origin: '*'  允许返回值  写*之后就不能和Access-Control-Allow-Credentials一起使用
+Access-Control-Allow-Headers: 'name,age'  允许的请求头
+Access-Control-Allow-Methods: 'PUT'   // 默认支持get post options
+Access-Control-Max-age: '6000'  // 设置预检测间隔时间
+
+非简单模式会试探性多发一次请求，预测一下可不可以跨域,但是可以设置预检测间隔时间
+
+cookie默认不能跨域请求，
+但是ajax的
+xhr.withCredentials = true;
+服务端设置
+Access-Control-Allow-Credentials: true
+
+服务端返回自定义头
+Access-Control-Expose-Headers: 'name'
+
+postMessge
+两个页面之间的通信
+a页面中通过iframe嵌入b页面
+
+a中发送消息
+let frame = document.getElementById('frame')
+//iframe.contentWindow 获取对应的iframe中的window
+frame.contentWindow.postMessge('hello word', 'http://localhost:4000') 想iframe发送消息
+frame.contentWindow.postMessge(a,b) 两个参数，发送的内容，向哪个域发
+window.onmessage = function(e) {
+  console.log(e.data) // 接收frame发出的数据
+}
+
+b中接收
+window.onmessage = function(e) {
+  console.log(e.data)
+  e.source.postMessge('no hello', e.origin)  // 返回对应的消息
+}
+
+window.name 
+window.name 获取的默认是一个空字符串
+a.html和b.html是同域的 3000端口
+c.html 4000端口
+
+a获取c的数据
+a先引用c c把值放到window.name 把a引用的地址改到b
+
+a.html
+<iframe src="http://localhost:4000/c.html" onload="load()" id="iframe">
+<script>
+  let first = true;
+  function load() {
+    let iframe = document.getElementById('iframe');
+    if(first) {
+      iframe.src="http://localhost:3000/b.html"
+      first = false
+    } else {
+      console.log(iframe.contentWindow.name)
+    }
+  }
+</script>
+
+c.html
+<script>
+  window.name = 'no hello'
+</script>
+
+hash 路径后面的hash值可以用来通信
+a.html和b.html是同域的 3000端口
+c.html 4000端口
+
+目的 a想访问c
+a给c传一个hash值 c收到hash值后 c把hash值传递给b b将结果放到a的hash值中
+
+a.html
+<iframe src="http://localhost:4000/c.html#hello">
+<script>
+  window.onhashchange = function() {
+    console.log(location.hash)
+  }
+</script>
+
+c.html
+console.log(location.hash)
+let iframe = document.createElement('iframe');
+iframe.src = "http://localhost:3000/b.html#nohello"
+document.body.appendChild(iframe)
+
+b.html
+window.parent.parent.location.hash = location.hash
+
+document.domain
+两者必须是一级域名或者都是二级域名的关系
+a.html
+<iframe src="http://b.zf.cn:3000/b.html" onload="load()" id="iframe">
+<script>
+  document.domain = 'zf.cn'
+  let iframe = document.getElementById('iframe')
+  function load() {
+    console.log(iframe.contentWindow.a)
+  }
+</script>
+
+
+b.html
+<script>
+  document.domain = 'zf.cn'
+  var a = 1;
+</script>
+
+websocket
+
+
+lesson2安全 
+xss 在网站上注入非法的脚本 跨站脚本攻击
+csrf 冒充身份 跨站请求伪造
+
+xss攻击造成的本质原因就是没有转译该转译的东西，没有过滤没有过滤的东西
+1.反射型
+一般情况下 服务端设置 httpOnly: true, 让前端不可读取修改cookie，但是这不是解决xss的方案，只会降低受损范围
+一般是诱导用户自己点击
+app.get('/welcome', function(req, res) {
+  res.send(`${req.query.type}`)  // 给啥返回啥
+})
+
+服务端查询参数可以加上encodeURIComponent,防止脚本执行
+res.send(`${encodeURIComponent(req.query.type)}`)
+
+2.DOM-Based型
+不基于后端的DOM-Based的攻击，当用户修改了某一个标签的属性，或者在div中插入了一些东西或者document.write
+改变结构之后 会造成攻击
+// 将输入框中输入的图片地址的图片显示出来
+$('add').on('click', function() {
+  $('.box').html(`<img src="${$('#web').val()}"`)
+})  
+这是一种典型的DOM-Based攻击手段
+<img scr="xxx" onerror="alert(1)" id="" />
+如果将xxx" onerror="alert(1)" id="这段脚本放进输入框之后，因为图片地址找不到就会执行onerror事件，这时候就会执行函数
+
+<img src=""> <script>alert(1)</script> "">
+"> <script>alert(1)</script> " 闭合img标签，这段脚本会直接插入到DOM页面中，脚本执行
+
+所以可以转译输入的内容
+$('.box').html(`<img src="${encodeURI($('#web').val())}"`)
+
+3. xss 存储型 将恶意脚本存储在服务器上，所有人访问时都会造成攻击
+输入内容不做检验，将输入内容直接保存在服务器中，这时候会导致所有人都会受到攻击
+修复办法
+1. 客户端传递给服务器时 需要先做验证
+2. 服务端再做一次过滤
+3. 直接在输出的时候做过滤
+
+1. function encodeHtml(str) {
+  return str.replace(/&/g, '&amp;')
+    str.replace(/"/g, '&quot;')
+    str.replace(/"/g, '&quot;')
+    str.replace(/'/g, '&apos;')
+    str.replace(/</g, '&lt;')
+    str.replace(/>/g, '&gt;')
+}
+
+csrf
+解决办法
+1. 添加验证码(体验不好)  
+npm install svg-captcha -S
+2. 判断请求来源(refere), 不靠谱，可以自己通过node自己发请求实现伪造
+3. 增加唯一标识(因为第三方网站是获取不到当前网站cookie的，所以可以在cookie基础上商城一个唯一标记)
+
+xss + csrf ==> xsrf
+
+前端监控
+1. 性能监控: 页面加载时间，触发特定事件，浏览器解析时间
+2. 数据监控: pv uv 页面来源 流量
+3. 异常监控: 页面错误监控
+
+为什么需要前端监控
+获取用户行为跟踪产品在用户端使用情况，并以监控数据为基础，指明优化的方向
+
+前端性能监控和错误监控
+1. 前端衡量性能指标(性能监控)
+resource timing performance APi
+2. 前端资源监控
+performance.getEntriesByType('resource')
+3. ajax请求监控
+拦截open和send方法
+

@@ -1,0 +1,59 @@
+timing: PerformanceTiming
+  connectEnd: 1572748398134
+  connectStart: 1572748398134
+  domComplete: 0
+  domContentLoadedEventEnd: 1572748398576
+  domContentLoadedEventStart: 1572748398570
+  domInteractive: 1572748398570
+  domLoading: 1572748398532
+  domainLookupEnd: 1572748398134
+  domainLookupStart: 1572748398134
+  fetchStart: 1572748398134 
+  loadEventEnd: 0
+  loadEventStart: 0
+  navigationStart: 1572748398129
+  redirectEnd: 0
+  redirectStart: 0
+  requestStart: 1572748398134
+  responseEnd: 1572748398523
+  responseStart: 1572748398134
+  secureConnectionStart: 0
+  unloadEventEnd: 0
+  unloadEventStart: 0
+
+Prompt for unload 在地址栏输入url
+unload 输入url之后 原来的地址栏卸载
+同域的情况下可能会存在重定向, 不同域就不存在这个情况 这俩值是0
+redirectStart
+redirectEnd 页面重新向的时间
+fetchStart 前一个页面下载完成，重定向完成，新的页面开始加载
+domainLookupStart
+domainLookupEnd dns解析开始和结束时间
+connectStart
+secureConnectionStart https会有这个参数，建立https通道
+connectEnd  tcp三次握手
+requestStart 请求开始时间，因为浏览器不知道请求什么时候会发完，所以没有请求结束时间
+responseStart - requestStart 响应的时常
+responseStart - responseEnd 第一个字节发出到最后一个发完 可以通过这个计算
+domLoading dom开始加载，此时页面会变成loading状态
+domInteractive dom解析完毕，但是此时没有加载资源，仅仅扫描了元素标签
+domContentLoadedEventStart和domInteractive值一样 此时就可以给DOM 添加事件了 
+domContentLoaded 和 domContentLoadedEventEnd DOM加载完毕 ？？？？ 
+domComplete 整个页面的所有资源全部加载完毕，触发window.onload方法
+loadEventStart 
+loadEventEnd onload函数执行，执行完毕触发loadEventEnd
+
+
+fetchStart - navigationStart 得到上一个页面卸载到这个页面的开始加载时间
+redirectEnd - responseStart 页面重新向时间
+domainLookupEnd - domainLookupStart 页面dns解析时长
+connectEnd - connectStart 页面tcp连接时长
+responseEnd - requestStart 从请求到响应的时长 响应结束到请求开始
+requestStart - navigationStart 首字节接收到的时长(ttfb)
+domLoading - domInteractive dom解析的时长
+domLoading - navigationStart 白屏时间
+domComplete - domLoading 整个dom解析时间，包括dom解析 渲染 所有资源加载完成
+loadEventEnd - loadEventStart window.onload函数执行时间
+loadEventEnd - navigationStart 输入url到页面全部加载完毕时间
+
+**image不存在跨域问题
