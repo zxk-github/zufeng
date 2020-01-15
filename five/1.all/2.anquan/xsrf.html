@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>评论</title>
+  <script src="./zepto.js"></script>
+  <!-- <script src="./xsrf.js"></script> -->
+</head>
+<body>
+  <input type="text" id="content"> <button id="btn">click</button>
+  <ul>
+    <li></li>
+  </ul>
+  <a href="/pay.html">求转账</a>
+  <script>
+    function getList() {
+      $.ajax({
+        url: '/api/list',
+        success: function(res) {
+          let html = '';
+          if(res.code === 0) {
+            res.comments.forEach(ele => {
+              html += `<li>${ele.username}  ${ele.content}</li>`
+            });
+            $('ul').html(html);
+          }
+        }
+      })
+    }
+    function encodeHtml(str) {
+      return str.replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+    }
+    $('#btn').click(function() {
+      let content = '架构课';
+      $.ajax({
+        type: 'post',
+        data: {
+          content: encodeHtml(content)
+        },
+        url: '/api/xsrf',
+        success: function(res) {
+          if(res.code === 1) {
+            location.href = '/login.html'
+          } else {
+            getList();
+          }
+        }
+      })
+    })
+    getList();
+  </script>
+</body>
+</html>

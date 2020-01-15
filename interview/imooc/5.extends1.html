@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>借助构造函数实现继承</title>
+</head>
+<body>
+    <!-- 父类构造函数的this指向子类的实例上去 -->
+    <script>
+        // 构造函数实现继承的原理 父类的this指向子类的实例上去, 这样就使得父类构造函数的属性在子类上都有体现
+        function Parent(name) {
+            this.name = name;
+            this.say = function() {
+                console.log(33);
+            }
+            this.arr = [1, 2, 3];
+        }
+
+        function Child(name, age) {
+            Parent.call(this, name);  // 父类的this指向子类的实例上去
+            this.age = age;
+        }
+        /*
+           1. 没有办法继承Parent原型上的方法和属性 
+           2. 构造函数中的函数和对象会被多次申明，耗费内存，也就是说函数和对象会被重新创建
+        */
+        let child1 = new Child('zhang', 12);
+        let child2 = new Child('song', 13);
+
+        console.log(new Child('zhang', 12))
+    </script>
+</body>
+</html>

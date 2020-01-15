@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <div id="app" v-click-out-side>
+    {{name}} 111
+    <input v-focus.a.b.c="name" />
+  </div>
+  <script>
+    /*
+      el: 当前指令绑定的元素
+      bindings 当前指令的属性
+        rowName 指令全名 v-focus.a.b.c
+        expression 指令表达式name
+        modefiers 指令描述符 {a: true, b: true, c:true}
+        value 指令的值 1
+        name 指令名称focus
+      vnode vnode.context获取的指令所在vue组件的实例
+    */
+    // 简写: 在bind和update的时候，触发相同的逻辑
+    Vue.directive('focus', function(el, bindings, vnode) {
+      // 在指令插入标签的时候执行一次，并且只会执行一次，这时候DOM并没有被渲染到页面上
+      el.style.border="10px solid #000"
+    })
+    Vue.directive('focus1', {
+      bind: function(el, bindings, vnode) {}, // 只会执行一次，绑定的时候执行
+      inserted: function() {}, // 元素插入父级的时候执行
+      update: function() {}, // 所在组件值更新的时候调用(绑定的表达式值发生变化的时候执行)
+      componentUpdated: function() {}, // 组件及其自组件更新之后调用
+      unbind: function() {} // 只会执行一次，指令销毁的时候执行
+    })
+
+
+    let vm = new Vue({
+      el: '#app',
+      data() {
+        return {
+          name: 1,
+          show: false
+        }
+      },
+      directives: {
+        clickOutSide: {
+          bind(el, bindings, vnode) {
+            el.fn = (e) => {
+              if(el.contains(e.target)) {
+                vnode.context['focus']()
+              } else {
+                vnode.context['hide']()
+              }
+            }
+            document.addEventListener('click', el.fn, false)
+          },
+          unbind(el) {
+            document.removeEventListener('click', el.fn, false)
+          }
+        }
+      },
+      methods: {
+        focus() {
+          this.show = true;
+        },
+        close() {
+          this.show = false;
+        }
+      }
+    })
+    
+  </script>
+</body>
+</html>

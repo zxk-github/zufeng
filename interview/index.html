@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        html,body {
+            width: 100%;
+            height: 100%;
+        }
+        body {
+            background: #eee;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        td {
+            border: 1px solid #ebeef5;
+        }
+        .contain {
+            width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        input {
+            padding: 10px;
+            width: 300px;
+            outline: none;
+            border: 1px solid #ddd;
+            border-right: none;
+            color: #333;
+        }
+        .flex {
+            display: flex;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        button {
+            color: #333;
+            background: #ff6b00;
+            border: none;
+            outline: none;
+            color: #fff;
+            padding: 0 10px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            color: #606266;
+            display: flex;
+        }
+        td {
+            box-sizing: border-box;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+            word-break: break-all;
+            line-height: 45px;
+            padding-left: 10px;
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="contain">
+        <div class="flex">
+            <input placeholder="请输入姓名" type="text" id="name"/>
+            <button id="add">添加姓名</button>
+        </div>
+        <div  class="flex">
+            <input placeholder="请输入组数" type="text" id="group"/>
+            <button id="btn">点击分组</button>
+        </div>
+        <table id="table">
+        </table>
+    </div>
+
+    <script>
+        window.onload = function() {
+            var name = document.getElementById('name');
+            var btn = document.getElementById('btn');
+            var add = document.getElementById('add');
+            var ogroup = document.getElementById('group');
+            var table = document.getElementById('table');
+            console.log(group)
+
+            let arrName = [];
+            add.onclick = function() {
+                arrName.push(name.value);
+                name.value = '';
+                window.localStorage.setItem('name', JSON.stringify(arrName));
+            }
+            btn.onclick = function() {
+                var group = ogroup.value;
+                ogroup.value = '';
+                var names = JSON.parse(window.localStorage.getItem('name'));
+                let nameGroup = [];
+                for(var i = 0; i < group; i++) {
+                    nameGroup.push([]);
+                }
+                let k = 0;
+                for(var j = 0; j < names.length; j++) {
+                    if(k === nameGroup.length) {
+                        k = 0;
+                    }
+                    nameGroup[k].push(names[j]);
+                    k++;
+                }
+                const domArr = nameGroup.map((el, index) => {
+                    let str = "<tr><td>第"+(index+1)+"组</td>";
+                    for(var i = 0; i < el.length; i++) {
+                        str = str + '<td>'+el[i]+'</td>';
+                    }
+                    str += "</tr>"
+                    return str;
+                })
+                table.innerHTML = domArr.join('');
+            }
+        }
+    </script>
+</body>
+</html>

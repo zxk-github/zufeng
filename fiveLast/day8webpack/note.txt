@@ -1,0 +1,51 @@
+webpack中一切都是模块
+
+作用
+代码转换
+文件优化 压缩图片 wenjian 
+代码分割 提起公共模块 懒加载
+模块合并 依赖模块合并
+自动刷新 开发
+代码校验 格式 符合规范
+自动发布 发布git npm
+
+基本概念
+entry 项目构建入口，一般情况下，一个入口代表一个chunk
+module 模块，一个module可能属于多个chunk
+chunk 代码快，一个chunk是多个模块组合而成, 代码分割合并都会产生新的chunk，最终会产生一个文件，放到硬盘上
+loader 模块转换器 不是js模块转为js模块
+plugin 在webpack构建过程中，在特定时机注入特定逻辑扩展功能
+
+entry开始，递归解析所有module，根据module类型不同执行不同loader进行模块转化，一个entry和其所有依赖的module会合并成一个chunk，在webpack的整个构建流程中，特定的时候会执行对应plugin的逻辑
+
+webpack 
+webpack-cli
+webpack-dev-server 监控文件变化，浏览器自动更新
+默认情况下，会把项目的目录文件返回
+devServer: {
+  contentBase: path.join(__dirname, './dist'),  // 产出文件的根目录
+  port: 8082 // 启动端口
+  compress: true // 压缩
+}
+webpack-dev-server --open 自动打开浏览器
+
+一个loader只做一件事
+
+{
+  loader: 'style-loader'
+}
+{
+  use: [],
+  use: [{
+    loader: ,
+    options: 
+  }]
+}
+
+单入口，没有指定名字，chunk的名字就是main
+output: {
+  filename: '[name].[hash:8].js'
+}
+hash: 每次编译都有唯一的hash值
+chunkHash
+contentHash

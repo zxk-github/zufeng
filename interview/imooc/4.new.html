@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        var news = function(fn) {
+            let o = Object.create(fn.prototype);
+            let res = fn.call(o, ...arguments);
+            if(typeof res === 'object') {
+                return res;
+            } else {
+                return o;
+            }
+        }
+
+        function Foo(name, age) {
+            this.name = name;
+            this.age = age;
+        }
+
+        var obj = news(Foo);
+        console.log(obj.name)
+        console.log(obj.age)
+
+
+        var p = {a: 1};
+        var o1 = Object.create(p)
+        
+    </script>
+</body>
+</html>

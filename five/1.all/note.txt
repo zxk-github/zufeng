@@ -12,13 +12,13 @@ http://zf.cn:90
 为什么浏览器不支持跨域
 cookie localStorage DOM元素都不支持跨域，都有跨域问题
 防止恶意网站读取cookie
-在一个页面中可以通过iframe引入别人的页面，理论上在同域下是可以操作iframe的 但是跨域不支持，防止跨站操作
+在一个页面中可以通过iframe引入别人的页面，理论上在同域下是可以操作iframe的 但是跨域不支持操作iframe页面，防止跨站操作
 ajax不支持跨域
 
 解决跨域
 - jsonp
 - cors
-- postMessge
+- postMessge 俩个页面之间的通信
 - document.domain 专门用来做子域和父域之间通信
 - window.name
 - location.hash 
@@ -32,7 +32,8 @@ link script img 都可以跨域加载资源
 
 jsonp 
 1.只能发送get请求 不支持 post put delete 
-2.并且不安全 容易进行xss攻击 因为如果引入的网站返回的是script标签 就会执行脚本 进行恶意攻击
+2.不安全 容易进行xss攻击 因为如果引入的网站返回的是script标签 就会执行脚本 进行恶意攻击
+3.url是有长度限制的
 
 ajax跨域的请求会到达服务器，只是服务器返回的结果被浏览器屏蔽掉了
 Access-Control-Allow-Origin: '*'  允许返回值  写*之后就不能和Access-Control-Allow-Credentials一起使用
@@ -40,7 +41,7 @@ Access-Control-Allow-Headers: 'name,age'  允许的请求头
 Access-Control-Allow-Methods: 'PUT'   // 默认支持get post options
 Access-Control-Max-age: '6000'  // 设置预检测间隔时间
 
-非简单模式会试探性多发一次请求，预测一下可不可以跨域,但是可以设置预检测间隔时间
+非简单模式会试探性多发一次请求，预测一下可不可以跨域,如果可以跨域，浏览器在发送请求体给服务端，但是可以设置预检测间隔时间
 
 cookie默认不能跨域请求，
 但是ajax的
@@ -51,20 +52,20 @@ Access-Control-Allow-Credentials: true
 服务端返回自定义头
 Access-Control-Expose-Headers: 'name'
 
-postMessge
-两个页面之间的通信
-a页面中通过iframe嵌入b页面
+postMessge 可以进行iframe引入的页面和所在页面之间的通信
+a页面中通过iframe嵌入b页面，实现a和b之前的通信
 
 a中发送消息
 let frame = document.getElementById('frame')
 //iframe.contentWindow 获取对应的iframe中的window
 frame.contentWindow.postMessge('hello word', 'http://localhost:4000') 想iframe发送消息
-frame.contentWindow.postMessge(a,b) 两个参数，发送的内容，向哪个域发
+frame.contentWindow.postMessge(content, origin) 两个参数，content发送的内容，origin向哪个域发
+a中接受b发送过来的数据
 window.onmessage = function(e) {
   console.log(e.data) // 接收frame发出的数据
 }
 
-b中接收
+b中接收a发送过来的数据
 window.onmessage = function(e) {
   console.log(e.data)
   e.source.postMessge('no hello', e.origin)  // 返回对应的消息
@@ -75,8 +76,8 @@ window.name 获取的默认是一个空字符串
 a.html和b.html是同域的 3000端口
 c.html 4000端口
 
-a获取c的数据
-a先引用c c把值放到window.name 把a引用的地址改到b
+目的: a获取c的数据
+a先引用c c把值放到window.name 把a引用的地址改到b 因为wendow上已经存在name属性 所以此时可以获取到name 
 
 a.html
 <iframe src="http://localhost:4000/c.html" onload="load()" id="iframe">
@@ -123,7 +124,11 @@ b.html
 window.parent.parent.location.hash = location.hash
 
 document.domain
-两者必须是一级域名或者都是二级域名的关系
+两者必须是一级域名和二级域名或者都是二级域名的关系
+配置host
+127.0.0.1 b.zf.cn
+127.0.0.1 a.zf.cn
+
 a.html
 <iframe src="http://b.zf.cn:3000/b.html" onload="load()" id="iframe">
 <script>
@@ -150,12 +155,15 @@ csrf 冒充身份 跨站请求伪造
 
 xss攻击造成的本质原因就是没有转译该转译的东西，没有过滤没有过滤的东西
 1.反射型
+用户输入什么，服务器返回什么
+localhost:3003/welcome?type=<script>document.cookie</script>
 一般情况下 服务端设置 httpOnly: true, 让前端不可读取修改cookie，但是这不是解决xss的方案，只会降低受损范围
 一般是诱导用户自己点击
 app.get('/welcome', function(req, res) {
   res.send(`${req.query.type}`)  // 给啥返回啥
 })
 
+解决办法
 服务端查询参数可以加上encodeURIComponent,防止脚本执行
 res.send(`${encodeURIComponent(req.query.type)}`)
 
@@ -177,6 +185,7 @@ $('add').on('click', function() {
 $('.box').html(`<img src="${encodeURI($('#web').val())}"`)
 
 3. xss 存储型 将恶意脚本存储在服务器上，所有人访问时都会造成攻击
+例子： 微博事件， 访问的时候会以自己身份发送一条微博
 输入内容不做检验，将输入内容直接保存在服务器中，这时候会导致所有人都会受到攻击
 修复办法
 1. 客户端传递给服务器时 需要先做验证
@@ -193,13 +202,19 @@ $('.box').html(`<img src="${encodeURI($('#web').val())}"`)
 }
 
 csrf
+请求伪造流程
+用户访问正常网站之后，就会获取cookie,然后诱导用户点击fishserver.js提供的服务，但是cookie是存在跨域的，所以在fishserver.js是不能获取到cookie的，但是可以在fishserver.js提供的页面上通过表单提交到正常的网站上(表单不存在跨域)
+
 解决办法
 1. 添加验证码(体验不好)  
 npm install svg-captcha -S
-2. 判断请求来源(refere), 不靠谱，可以自己通过node自己发请求实现伪造
-3. 增加唯一标识(因为第三方网站是获取不到当前网站cookie的，所以可以在cookie基础上商城一个唯一标记)
+2. 判断请求来源(refere), 不靠谱，refer就是一个http，可以进行自己服务器模拟
+3. 增加唯一标识token(因为第三方网站是获取不到当前网站cookie的，所以可以在cookie基础上商城一个唯一标记)
 
 xss + csrf ==> xsrf
+直接在页面中注入脚本，利用同源策略直接想服务器发请求
+
+
 
 前端监控
 1. 性能监控: 页面加载时间，触发特定事件，浏览器解析时间

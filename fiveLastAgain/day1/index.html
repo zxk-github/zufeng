@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <style>
+    .mark{
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      background: rgba(0,0,0,0.5);
+    }
+    .pop-contain{
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      width: 300px;
+      height: 100px;
+      background: #fff;
+      text-align: center;
+      margin: auto;
+    }
+  </style>
+  <div>
+    <div class="mark"></div>
+    <div class="pop-contain" id="pop_contain"></div>
+  </div>
+  <script>
+    let popContain = document.getElementById('pop_contain');
+    function getNowDate() {
+      let oDate = new Date();
+      let year = oDate.getFullYear();
+      let month = oDate.getMonth()+1;
+      let day = oDate.getDate();
+      let hour = oDate.getHours();
+      let minute = oDate.getMinutes();
+      let second = oDate.getSeconds();
+      return `${year}-${addZero(month)}-${addZero(day)} ${addZero(hour)}:${addZero(minute)}:${addZero(second)}`;
+    }
+    function addZero(number) {
+      return number > 9 ? number : '0'+number;
+    }
+    popContain.innerHTML = getNowDate()
+  </script>
+
+  <script>
+    let p = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        let random = Math.random();
+        if(random >= 0.5) {
+          resolve(random);
+        } else {
+          reject(random);
+        }
+      })
+    })
+    p.then((data) => {
+      console.log(data)
+    }).catch((data) => {
+      console.log(data)
+    })
+  </script>
+</body>
+</html>

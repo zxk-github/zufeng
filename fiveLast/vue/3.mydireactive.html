@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <div id="app">
+    <input v-focus.a.b.c="name" />
+  </div>
+  <script>
+    /**
+     * el: 代表当前指令绑定元素
+     * bindings: 绑定的属性a b c
+          name 当前指令名称 focus
+          expression 指令绑定的表达式 name
+          value 当前指令绑定表达式的值 1
+          rawName 当前指令的全名 v-focus.a.b.c
+          modifiers 当前指令表达式属性 {a: true, b: true, c: true}
+     * vnode 虚拟节点
+     *    context: 当前指令所在的vue实例
+     */
+    Vue.directive('focus', function(el, bindings, vnode) {
+      // 此方法只在绑定时候执行，指令依赖的数据变化了才会执行
+      // el.focus() 这个不会生效，因为这时候DOM没有被渲染到页面上
+      console.log(el, bindings, vnode)
+      Vue.nextTick(()=> {
+        el.focus()
+      })
+    })
+    Vue.directive('focus1', {
+      bind(el, bindings, vnode) {  // 绑定的时候才会执行
+
+      },
+      update(el, bindings, vnode) { // 依赖数据更新的时候执行
+
+      },
+      inserted(el, bindings, vnode) { // 元素插入到页面之后执行
+        if(bindings.modifiers.color) {
+          el.style.color = bindings.value;
+        }
+      },
+      unbind() { // 指令销毁的时候，会触发此函数
+
+      }
+    })
+    let vm = new Vue({
+      el: '#app',
+      data: {
+        name: 1
+      }
+    })
+  </script>
+</body>
+</html>

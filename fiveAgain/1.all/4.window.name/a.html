@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <iframe id="iframe" src="http://localhost:4001/b.html" onload="load()"></iframe>
+  <script>
+    var iframe = document.getElementById('iframe');
+    var flag = true;
+    function load() {
+      if(flag) {
+        iframe.src = "http://localhost:4000/c.html";
+        flag = false;
+      } else {
+        console.log(iframe.contentWindow.name)
+      }
+    }
+  </script>
+</body>
+</html>
+<!-- 
+  a和b跨域 iframe加载b完成之后，b会直接执行js，在window上添加一个name属性
+  然后动态切换iframe的src，引入a同域下的c，因为a c同域，所以可以直接访问到iframe window上的属性
+ -->

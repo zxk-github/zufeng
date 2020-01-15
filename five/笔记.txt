@@ -1658,6 +1658,31 @@ Vue.use(Vuex) 使用这个插件的install方法
 
 
 
+token 原理
+token包含3段
+令牌头.payload.哈希
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+eyJkYXRhIjp7InVzZXJuYW1lIjoiYWJjIiwicGFzc3dvcmQiOiIxMTExMTEifSwiZXhwIjoxNTU3MTU1NzMwLCJpYXQiOjE1NTcxNTIxMzB9.
+pjGaxzX2srG_MEZizzmFEy7JM 3t8tjkiu3yULgzFwUk
+
+头部.payload.签名
+
+haeder.payload.sigin
+header是一个对象，描述的是JWT元数据
+{
+    alg: 'HS256' 签名算法
+    type: "JWT"   JWT令牌统一写为JWT
+}
+
+paload 也是一个JSON，用来保存实际的数据
+JWT默认不加密，所以尽量不要放置私密信息，所以不可以把私密信息放在这段
+
+sign部分是对前两部分的签名，放置串改
+HMACSH256(base64Header, base64Payload, secret)
+base64(header), base64(payload), HMACSH256(base64header.base64payload, secret)
+
+token最大的问题就是没有办法废除某一个token,除非服务端做处理
+token一旦签发就会永远有效
 
 
 
@@ -1680,6 +1705,4 @@ Vue.use(Vuex) 使用这个插件的install方法
 
 
 
-
-
-
+patch如果老的节点和新的节点不一样，那就直接删除对应的节点

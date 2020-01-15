@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <div id="app">{{name}} {{ {name: 1} }} [1, 2, 3]
+
+    <!-- vue为了节省性能，会进行DOM重用，所以input不会被重新渲染，这时候需要加key值进行区分 -->
+    <template v-if="name">
+      <span>1</span>
+      <input type="text" key='1' />
+    </template>
+    <template v-else>
+      <span>2</span>
+      <input type="text" key='2' />
+    </template>
+    <input :value="value" @input="fn1($event)" />
+    <input :value="value" @input="$event => value=$event.target.value" />
+    <input v-model="value" />
+  </div>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      methods: { // methods中所有的this都指向当前Vue实例，bind了
+        fn1(e) {
+          this.value = e.target.value;
+        }
+      },
+      data: {
+        name: 1,
+        value: '',
+        fn() {
+          console.log(this) //方法写在date中，this指向window
+        }
+      }
+    })
+    // {{ }} 这里面只能放又返回值的东西
+
+    /**
+     * 指令功能就是封装DOM操作的 
+     * v-once 节点只会渲染一次 数据变化之后，节点只会读缓存
+        v-html 防止xss,不要将用户输入的东西直接显示在页面上，后端返回的数据可以通过这种方式显示出来
+        v-bind 
+        v-for key的作用，唯一标识别，复用元素，数据数据更新之后，不需要重新创建节点，提高性能, 如果仅仅是静态展示，可以使用数组的index 但是循环template的时候，不能设置key
+        v-if DOM不渲染
+        v-show 显示style v-show不能和template一起用，因为不生效
+        v-model 只要能改的就可以双向绑定(表单 组件)
+     */
+  </script>
+</body>
+</html>

@@ -1,9 +1,9 @@
 // 判断数据类型 typeof constructor instanceof Object.prototype.toString.call
 /**
- * typeof 不能判断数据 对象 null
- * 对象{} 数字 字符串 不能用constructor instanceof进行类型的判断
- * constructor 只能用来判断类直接new出来的对象,和数组的字面量，并且可能会受到原型链的影响
- * instanceof 容易收到祖类的干扰 
+ * typeof 不能判断对象 null, 不能判断对象是谁的实例
+ * 对象 和原始数据类型需要加()才能使用constructor 进行类型的判断
+ * constructor 可能会受到原型链的影响
+ * instanceof 容易受到祖类的干扰 instanceof 不能用于简单数据类型的判断 1 instanceof Number // false
  * Object.prototype.toString.call 可以区分类型但是不能区分谁的实例
  *  */
 
@@ -35,3 +35,7 @@ function curring(fn, args = []) {
 
 var c = curring(add)(1,3)(2);
 console.log(c(1));
+
+
+
+

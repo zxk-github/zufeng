@@ -1,0 +1,15 @@
+组件间通信方式
+
+
+keep-alive
+kepp-alive是内置组件，他可以使被包含组件保留状态，避免重新渲染，
+当组件激活的时候触发actived 当组件移除的时候触发deactived
+
+proxy 
+  可以直接监听对象，而不是属性
+  支持数组，但是需要过滤掉length属性
+  Proxy会返回一个新的对象，而Object.defineProperty只能便利对象属性直接修改
+
+Object.definePro
+
+

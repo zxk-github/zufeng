@@ -10,7 +10,8 @@
   <div>asfasdf</div>
   <script>
     let xhr = new XMLHttpRequest();
-    xhr.open('GET', 'http://localhost:4000/data', true)
+    document.cookie = 'name=zxk';
+    xhr.open('PUT', 'http://localhost:4000/data', true)
     xhr.withCredentials = true; // 设置之后 跨域也要强制带上cookie
     xhr.setRequestHeader('name', 'zf')
     xhr.send()

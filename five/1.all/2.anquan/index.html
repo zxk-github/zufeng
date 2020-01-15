@@ -12,7 +12,7 @@
     $('add').on('click', function() {
       $('.box').html(`<img src="${$('#web').val()}"`)
     })  
-    // 这是一种典型的DOM-Based攻击手段
+    // 这是一种典型的DOM-Based攻击手段， 不基于后端
     // <img scr="xxx" onerror="alert(1)" id="" />
     // 如果将xxx" onerror="alert(1)" id="这段脚本放进输入框之后，因为图片地址找不到就会执行onerror事件，这时候就会执行函数
 

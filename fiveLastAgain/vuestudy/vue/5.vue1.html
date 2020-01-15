@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.28/vue.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    aaa
+    <my-component></my-component>
+  </div>
+
+  <script>
+    Vue.component('my-component', {
+      template: '<div>A custom component!</div>'
+    })
+    Vue.component('child1', {
+      template: '<child2></child2>',
+      methods: {
+        change() {
+          alert(1)
+        }
+      }
+    })
+    Vue.component('child2', {
+      template: '<child3></child3>',
+      methods: {
+        change( ) {
+          alert(1)
+        }
+      }
+    })
+    Vue.component('child3', {
+      template: '<child4></child4>',
+      methods: {
+        change( ) {
+          alert(1)
+        }
+      }
+    })
+    Vue.component('child4', {
+      template: `<div>1111</div>`,
+      methods: {
+        change( ) {
+          alert(1)
+        }
+      }
+    })
+    new Vue({
+      el: 'app'
+    })
+  </script>
+  
+</body>
+</html>

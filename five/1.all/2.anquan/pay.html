@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>转账页面</title>
+  <script src="./zepto.js"></script>
+</head>
+<body>
+  <div>
+    用户: <span id="user"></span>
+  </div>
+  <div>
+    余额: <span id="yue"></span>
+  </div>
+  <div>
+    验证码: <div id="img"></div>
+    <input type="text" id="code" />
+  </div>
+  <div>
+    收款人: <input type="text"  id="target"/>
+  </div>
+  <div>金额: <input type="money" id="money" /></div>
+  <button id="btn">转账</button>
+  <script>
+    function getUserInfo() {
+        $.ajax({
+          url: '/api/userInfo',
+          success(res) {
+            if(res.code === 0) {
+              let {username, money, svg} = res.user;
+              $('#user').html(username);
+              $('#yue').html(money);
+              $('#img').html(svg)
+            } else {
+              location.href="/login.html"
+            }
+          }
+        })
+    }
+    getUserInfo()
+    $('#btn').click(function() {
+      let target = $('#target').val();
+      let money = $('#money').val();
+      let code = $('#code').val();
+      let token = document.cookie.match(/connect.sid=([^;]*)/) || [];
+      $.ajax({
+        type:"post",
+        url: '/api/transfer', 
+        data: {
+          target, money, code, token: 'my_'+token[1]
+        },
+        success(res) {
+          if(res.code == 0) {
+            getUserInfo()
+          } else { 
+            location.href="/login.html"
+          }
+        } 
+      })
+    })
+    function transfer(e) {
+    }
+  </script>
+</body>
+</html>

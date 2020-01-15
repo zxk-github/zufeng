@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <div id="app" class="app">1111</div>
+    <script>
+      let vm = new Vue({
+        el: '#app',
+        data: {
+          a: 1
+        },
+        template: '<div>222</div>',
+        render(h) {
+          return h('h1', {}, '333')
+        },
+        beforeMount() {
+          console.log(1)
+        },
+        mounted() {
+          console.log(2)
+        },
+        destroyed() {
+          console.log(33)
+        }
+      })
+      vm.$destroy()
+
+      
+    </script>
+</body>
+</html>
+<!-- 
+*** vue实例的初始化是一个同步的过程，所以生命周期钩子中的定时器，ajax请求等异步逻辑不会阻碍vue实例的初始化过程
+  生命周期钩子
+1. 初始化事件和生命周期
+  a.初始化自己内部的一套发布订阅
+  b.收集子级父级
+  c.生命周期函数的初始化
+  d.实例属性的挂载
+2. beforeCreate
+  a.此时已经可以获取到$parent $children
+  b.可以拿到$data $props $refs但是没有值
+  c.methods watch computed没有值
+3. 初始化&校验
+  a.初始化$data数据，$props数据并校验数据
+  b.methods, watch computed的填充
+4. created
+  a.当前组件初始化完成，$props, $data初始化完成
+  b.数据劫持已经完成
+  c.不能获取到真实的dom
+5. 挂载阶段
+  a. el配置项是否有值，有就使用，没有就等待当后续调用$mount()方法
+  b. 是否有template配置项。有就是用，没有就将el或者$mount()的值作为template
+  c. el template render函数都存在的时候会使用render函数，因为template也会编译成render函数
+6. beforeMount render函数执行，生成真实DOM，保存在内存中
+7. 通过vm.$el获取渲染在内存中的DOM。替换掉el或者$mount()的内容
+8. mounted 挂载完毕，这时可以获取到全部的真实DOM
+
+9. beforeUpdate 这里面进行数据的变化不会导致视图的更新，
+**** 只有数据在视图中使用了，数据变化的时候才会更新视图，没有使用，不需要更新
+10. updated 更新完成这里面尽量不要进行数据的更新，容易死循环
+
+11. beforeDestroy 
+12. 解除父子组件关系，并且移除数据监听
+
+12 destroyed 销毁之后
+移除所有的观察者，仅仅销毁的是数据的监听，视图不会发生变化 
+
+调用 vm.$destroy()
+-->

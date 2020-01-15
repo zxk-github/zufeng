@@ -1,0 +1,14 @@
+格式化范围是一个渲染区域
+不同的元素设置不同的css之后，有不同的渲染方式，他决定了子元素如何定位排列以及和其他元素之间的关系
+
+BFC决定了元素内的子元素如何定位，以及元素和其他元素之间的关系
+当元素在进行布局的时候，BFC提供了一个环境，html元素在这个环境中按照一定的规则排列
+一个环境中的元素不会影响其他环境的布局
+也就是说可以把BFC理解为一个单位，这个单位内元素如何排列不受外界影响
+形成BFC
+float 不为none
+overflow不为visible
+display可以是table-cdel table--caption inline-block
+position 不为static和relative
+
+

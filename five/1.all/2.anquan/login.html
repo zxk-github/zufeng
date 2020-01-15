@@ -5,21 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  <script src="./zepto.js"></script>
 </head>
+
 <body>
+  <div>
+    用户名: <input type="text" id="username" />
+  </div>
+  <div>
+    密码: <input type="password" id="password" />
+  </div>
+  <button id="btn">点击</button>
   <script>
-    function login(e) {
-      e.preventDefault();
-      let username = $('#username').val();
+    $('#btn').click(function() {
+      let username = $('#username').val()
       let password = $('#password').val()
-      $.post('/api/login', {username, password}).then((res) => {
-        if(res.code == 0) {
-          location.href = '/welcome'
-        } else {
-          alert('error')
+      $.ajax({
+        type: 'post',
+        url: '/api/login',
+        data: {
+          username,
+          password
+        },
+        dataType: "json",
+        success: function(res) {
+          if(res.code == 0) {
+            location.href = '/comment.html'
+          } else {
+            
+          }
         }
       })
-    }  
+    })
   </script>
 </body>
 </html>

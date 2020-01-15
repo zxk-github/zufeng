@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 借助原型链实现继承 -->
+    <script>
+        function Parent() {
+            this.name = 'name';
+            this.play = [1, 2, 3];
+        }
+
+        function Child() {
+            Parent.call(this);
+            this.age = '12'
+        }
+
+        Child.prototype = new Parent();
+        /*
+            父类的构造函数执行了两次
+            子类实例的构造函数指向Parent
+            console.log(child.constructor) // Parent
+        */
+
+        // 优化1
+        function Parent1() {
+            this.name = 'name';
+            this.play = [1, 2, 3];
+        }
+
+        function Child1() {
+            Parent1.call(this);
+            this.age = '12'
+        }
+
+        Child1.prototype = Parent1.prototype;
+        // Child1.prototype.constructor = Child1; 这时候会改变父类的构造函数
+
+        let child1 = new Child1();
+        console.log(child1.__proto__ === Child1.prototype) // true;
+
+        function Parent2() {
+            this.name = 'name';
+            this.play = [1, 2, 3];
+        }
+
+        function Child2() {
+            Parent2.call(this);
+            this.age = '12'
+        }
+
+        Child2.prototype = Object.create(Parent2.prototype);  // 创建的新对象的__proto__指向Parent2.prototype
+        Child2.prototype.constructor = Child2;  // 修改构造函数属性
+        let child3 = new Child2();
+        
+    </script>
+</body>
+</html>

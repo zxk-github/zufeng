@@ -1,0 +1,12 @@
+
+协议 域名 端口一样才叫同域
+
+为什么会有跨域，因为浏览器的同源策略导致了跨域
+防止网站恶意串改cookie
+跨域条件下 不能访问cookie localstorage DOM操作
+
+在一个页面中通过iframe引入别的页面，理论上在同域下是可以操作iframe的，但是跨域不支持操作iframe，防止跨站操作
+
+
+postMessge可以实现iframe页面之间的通信
+a页面中通过iframe引入了b，postMessage可以实现两个页面之间的通信

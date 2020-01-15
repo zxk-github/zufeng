@@ -12,15 +12,4 @@ function instance_of(ins, con) {
 
 
 
-function instance_of(ins, con) {
-  let conProto = con.prototype;
-  while(true) {
-    let insProto = Object.getPrototypeOf(ins);
-    if(insProto === null) return false;
-    if(insProto === conProto) return true;  
-  }
-}
-
-
-
 

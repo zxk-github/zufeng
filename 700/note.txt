@@ -28,6 +28,7 @@ http缓存
 
 http状态码
 200 请求成功
+201 服务器已经接受请求，但尚未处理
 202 服务器接受请求，但是尚未处理
 206
 301 永久重定向，改资源已经被永久移动到某一个位置
@@ -61,3 +62,5 @@ ajax交互模型
 使用 iframe+location.hash
 使用 html5 的 postMessage 
 使用 jsonp (创建动态 script )
+
+

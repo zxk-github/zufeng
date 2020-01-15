@@ -75,3 +75,15 @@ console.log(checkType(1));
 
 
 
+
+
+function throttle(fn, timeout = 30) {
+	let sys = true;
+  	if(sys) {
+      	setTimeout(() => {
+    	  fn()
+    	}, timeout)
+    }
+}
+
+throttle(fn, 200) 

@@ -23,3 +23,8 @@ function difference(a, b) {
 
 console.log(difference(arr1, arr2));
 
+
+
+
+
+

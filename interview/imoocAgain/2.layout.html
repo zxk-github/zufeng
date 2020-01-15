@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <style>
+    html, body, .flex, .grid, .table{
+      height: 100%;
+    }
+    .left{
+      background: red;
+    }
+    .center{
+      background: yellow;
+    }
+    .right{
+      background: blue;
+    }
+  </style>
+  <!-- <div class="flex">
+    <div class="left"></div>
+    <div class="center"></div>
+    <div class="right"></div>
+  </div>
+  <style>
+    .flex{
+      display: flex;
+      justify-content: space-between;
+    }
+    .flex .left, .flex .right {
+      flex: 0 0 300px;
+    }
+    .center {
+      flex: 1 1 auto;
+    }
+  </style> -->
+
+  <!-- <div class="grid">
+    <div class="left"></div>
+    <div class="center"></div>
+    <div class="right"></div>
+  </div>
+  <style>
+    .grid {
+      display: grid;
+      grid-template-columns: 300px auto 300px;
+      grid-template-rows: 100% 100% 100%;
+    }
+  </style> -->
+  <div class="table">
+    <div class="left"></div>
+    <div class="center">center</div>
+    <div class="right"></div>
+  </div>
+  <style>
+    .table {
+      display: table;
+    }
+    .table .left, .table .right {
+      width: 300px;
+      display: table-cell;
+    }
+    .table .center {
+      display: table-cell;
+      width: auto;
+    }
+  </style>
+</body>
+</html>
+
+
+<!-- 
+  如果要求全屏，高度自适应
+postion 
+flex
+grid
+inline-block + calc可以
+表格
+-->

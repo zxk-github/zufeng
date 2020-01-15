@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <div id="app" v-click-outside>
+    <input />
+    <div v-if="show">
+      显示
+      <button>click</button>
+    </div>
+  </div>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      data: {
+        name: 1,
+        show: false
+      },
+      directives: { 
+        clickOutside: {
+          bind(el, bindings, vnode) {
+            el.fn = (e) => {
+              if(el.contains(e.target)) {
+                vnode.context['focus']();
+              } else {
+                vnode.context['blur']();
+              }
+            }
+            document.addEventListener('click', el.fn);
+          },
+          unbind(el) {
+            document.removeEventListener('click', el.fn);
+          }
+        }
+      },
+      methods: {
+        focus() {
+          this.show = true;
+        },
+        blur() {
+          this.show = false;
+        }
+      }
+    })
+  </script>
+</body>
+</html>

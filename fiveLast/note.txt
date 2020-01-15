@@ -1,0 +1,297 @@
+day1
+高阶函数
+函数参数如果是函数，或者这个函数返回一个新的函数，我们就叫这个函数是高阶函数
+Aop
+面向切换编程，把一些核心功能代码抽离出来。然后在不改变核心代码的基础上添加新的功能
+
+let a = () => {
+  console.log(this);   
+  console.log(arguments)
+}
+a(1);
+arguments 在浏览器中直接访问会报错，在node端会答应出一些模块相关的参数
+this 在浏览器端打印出undefined， node端是一个空对象
+
+数据类型校验
+typeof 只能判断数据的类型，不能判断实例，null也会返回object，未申明变量返回undefined
+instanceof 可以利用原型链判断当前对象的类型，但是数字字符串不能判断
+1 instanceof Number  //false
+(1) instanceof Number // false
+[] instanceof Array true
+{} instanceof Object 会报错
+({}) instanceof Object true
+construtor 可以用来判断是谁的实例
+Object.prototype.toString.call 只能用来判断几种特定的原生类型，不能在实例和构造函数之间建立联系
+
+function Fn() {}
+let fn = new Fn();
+Object.prototype.toString.call(fn)          // [object Object]
+Object.prototype.toString.call({})          // [object Object]
+Object.prototype.toString.call([])          // [object Array]
+Object.prototype.toString.call('')          // [object String]
+Object.prototype.toString.call(1)           // [object Number]
+Object.prototype.toString.call(true)        // [object Boolean]
+Object.prototype.toString.call(Fn)          // [object Function]
+Object.prototype.toString.call(/a/)         // [object RegExp]
+Object.prototype.toString.call(new Date()   // [object Date]
+Object.prototype.toString.call(new Error()  // [object Error]
+
+promise解决的问题
+1.回调嵌套问题
+2.错误不好捕获问题
+3.多个异步同步问题 Promise.all
+
+promise特性
+1.状态只能是pending --> fulfilled pending --> rejected
+2.每个实例都有一个then方法，两个参数分别对应fulfulled和rejected
+3.一个promise实例then多次，成功会让成功依次执行，失败会让失败依次执行
+var p = new Promise();
+p.then(() => {}, () => {})
+p.then(() => {}, () => {})
+p成功会依次执行then的第一个参数，失败会依次执行第二个参数
+4.在new Promise的时候如果抛出错误throw new Error('1'), 这时候会调用reject
+
+
+如何终止promise链执行
+返回一个不成功也不失败的等待的promise
+let p = new Promise((resolve, reject) => {
+  resolve()
+}).then(() => {
+  return new Promise(() => {})  // 返回一个不结束状态的promise，就会终止promise链的执行
+}).then(() => { //不希望这个then再执行了
+
+})
+
+如何终止一个promise执行(中断) 或者超过多少秒就让promise失效
+var p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(1);
+  }, 3000)
+})
+
+function wrap(promise) {
+  let abort;
+  let newPromise = new Promise((resolve, reject) => {
+    abort = reject;
+  })
+  let p = Promise.race([newPromise, promise]);
+  p.abort = abort;
+  return p;
+}
+let p = wrap(p1);
+setTimeout(function() {
+  p.abort();
+})
+p.then((data) => {
+  console.log(data)
+}, (err) => {
+  console.log(err)
+})
+
+变量申明
+var 
+1. 申明到全局 污染全局变量 
+2. 变量提升(function var import)
+3. 同一作用域可以重复什么一个变量
+let const 
+1. 可以使用块级作用域
+
+Symbol 独一无二
+// 解构赋值
+
+let {length} = [1,2]
+console.log(length)
+
+let [, b, ...c] = [1, 2, 3, 4, 5]
+console.log(b, c)
+
+// 对象的展开 一个对象展开放到另一个对象中
+let arr1 = [1, 2]
+let arr2 = [3, 4]
+let arr = [...arr1, ...arr2];
+
+let obj1 = {a: 1}
+let obj2 = {b: 2}
+console.log({...obj1, ...obj2})
+
+// 剩余运算符 只能用在最后一项，有收敛功能，剩下的内容重新组装
+let [, e, ...f] = [1, 2, 3, 4, 5]
+let {name, ...age} = {name: 1, age: 2, grade: 3}
+console.log(name, age)
+
+
+// 将值转为数组两种方式Array.from  ...展开运算符将类数组展开放进去
+function fn() {
+  console.log(...arguments)
+  // console.log(...{'0': 1, '1': 2, '2': 3}) // 提示必须具备Symbol.iterator属性， 因为...是通过迭代器来进行使用的
+  console.log(...[1,2,3])
+  console.log(Array.from({'0': 1, '1': 2, '2': 3}))   // []  因为Array.from()会根据length属性的值进行遍历存放进一个数组中
+}
+fn(1, 2, 3)
+
+
+let obj = {'0': 0, '1': 1, '2': 2, length: 3}
+obj[Symbol.iterator] = function() {
+  let i = 0
+  return {
+    next() {
+      return {value: obj[i], done: ++i > obj.length }
+    }
+  }
+} 
+console.log(...obj)
+
+let obj1 = {'0': 0, '1': 1, '2': 2, length: 3}
+obj1[Symbol.iterator] = function* (){ 
+  let i = 0;
+  while(i < this.length) {
+    yield this[i++];
+  }
+}
+console.log(...obj1);
+
+具有Symbol.iterator属性的类型 字符串 数组 arguments Set Map
+
+深拷贝
+let obj = {
+  a: '',
+  b: 0,
+  c: null,
+  d: undefined,
+  e: function() {},
+  f: /a/,
+  g: new Date(),
+  h: new Error('a')
+}
+console.log(JSON.parse(JSON.stringify(obj)))
+/*
+{ a: '',
+  b: 0,
+  c: null,
+  f: {},
+  g: '2019-11-24T02:43:43.717Z',
+  h: {} }
+*/
+
+
+Object.defineProperty 只能了拦截对象的getter setter操作，不能监听数组的api的调用
+Proxy 可以代理数组和对象,只会代理一层对象
+
+node模块采用commonjs规范，支持动态倒导入，可以根据代码执行，决定是否导入模块
+if(true) {
+  require('./index.js')
+}
+es6模块是静态导入，必须放在js文件最上面
+
+1. export 只能导出一个接口，不能导出实际的值
+let a = 1;
+export a; 会报错，因为此时相当于export 1，导出的是一个实际上的值
+export let a = 1; 就是一个接口
+export {
+  a
+}
+export {
+  a: a // 错误
+}
+
+// a.js
+setInterval(() => {
+  a++;
+}, 100)
+
+// index.js
+import { a } from './a.js'
+setInterval(function() {
+  console.log(a) // 因为导出的是一个接口，所以a变化，每次都能获取到a的最新的值
+}, )
+
+重命名
+export {a as c}
+
+导出一个真实的值
+export {a, b}
+export default 1;
+import {a, b, default as c} from './a'
+import _, {a, b} from './a'
+_下划线代表default
+
+一次全部引入
+import * as obj from './a'
+
+总结：
+导出 
+export let a = 1
+export default 1;
+export { a }
+导入
+import * as obj from './a'
+import _, {a} from './a'
+import {a, default} from './a'
+
+连写
+export {a} from './c';
+export {b}
+引入
+import {a, b} from './a'
+
+import 会申明变量，并且存在变量提升，会存在暂时性死区
+
+试验性语法
+setTimeout(() => {
+  import('./a').then((data) => {
+    console.log(data)
+  })
+  import(/* webpackChunkName: "filename" */, './a').then((data) => {
+    console.log(data)
+  })
+})
+
+
+
+es5 class 
+
+进程和线程
+电脑分配任务是以进程来分配的，进程是计算机管理的最小单位
+进程中是包含线程的 node中的主线程也是单线程的
+libuv提供一下模块(fs http path ...)
+开发工具 解决中间层(跨域) 服务端渲染(seo优化 spa mpa ) 纯后端
+
+用node做服务，可以开启多个进程
+一个cpu开启一个进程(一核一个进程)
+java 对文件I/O操作不合适 适合cpu密集型(计算)
+node I/O操作 
+node中为了实现异步I/O 通过多线程来实现 每次读取文件，libuv都会开启一个新的线程，当读取完毕之后，通过事件通知主线程
+
+同步和异步 针对被调用者来说的，被调用者决定同步还是异步
+阻塞和非阻塞 针对调用者来说的，调用者决定阻塞还是非阻塞
+调用者调用了一个同步的方法，这时候调用者就处于等待的状态，此时就会阻塞
+
+node中的全局变量
+
+'global',  全局属性
+'process', 进程
+'Buffer', 二进制文件，因为node需要操作文件，所以需要二进制数据
+'clearImmediate',
+'clearInterval',
+'clearTimeout',
+'setImmediate',
+'setInterval',
+'setTimeout'
+
+process
+process.argv // 当前进程的输入的参数
+process.chdir // 改变当前进程的工作目录
+process.nextTick
+process.env // 当前进程环境变量
+
+
+koa 和 express区别
+1.中间件异步处理不一样
+koa天生支持中间件中的异步逻辑
+express不支持，会直接跳过中间件中的异步逻辑，直接向下执行
+2.错误捕获不一样
+koa监听error事件
+express 专门写一个中间件处理错误，并且错误需要通过next()参数向下传递，并且跳过所有中间件，到达错误处理中间件
+
+
+

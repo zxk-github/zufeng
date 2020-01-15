@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="float">
+    <div class="left">left</div>
+    <div class="right">right</div>
+    <div class="center">center</div>
+  </div>
+  <style>
+    .float{
+      overflow: hidden;      
+    }
+    .float .left {
+      width: 300px;
+      float: left;
+      height: 100px;
+      background: blue;
+    }
+    .float .right {
+      width: 300px;
+      float: right;
+      height: 100px;
+      background: yellow;
+    }
+    .float .center {
+      height: 100px;
+      background: red;
+      margin: 0 300px;
+      box-sizing: border-box;
+    }
+  </style>
+  <div class="position">
+    <div class="left">left</div>
+    <div class="right">right</div>
+    <div class="center">center</div>
+  </div>
+  <style>
+    .position{
+      position: relative;
+    }
+    .position .left {
+      width: 300px;
+      height: 100px;
+      background: blue;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    .position .center {
+      height: 100px;
+      margin: 0 300px;
+      background: red;
+    }
+    .position .right {
+      width: 300px;
+      height: 100px;
+      background: yellow;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  </style>
+
+  <div class="table">
+    <div class="left">left</div>
+    <div class="center">center</div>
+    <div class="right">right</div>
+  </div>
+
+  <style>
+    .table {
+      display: table;
+    }
+    .table div{
+      height: 100px;
+      width: 100px;
+    }
+    .table .left {
+      width: 300px;
+      background: blue;
+    }
+    .table .center {
+      width: 100%;
+      display: table-cell;
+      background: red;
+      vertical-align: middle;
+      text-align: center;
+    }
+    .table .right {
+      width: 300px;
+      background: yellow;
+    }
+  </style>
+  <div class="flex">
+    <div class="left">left</div>
+    <div class="center">center</div>
+    <div class="right">right</div>
+  </div>
+
+  <div class="inline-block">
+    <div class="left">left</div>
+    <div class="center">center</div>
+    <div class="right">right</div>
+  </div>
+  <style>
+    .inline-block {
+      font-size: 0;
+    }
+    .inline-block div{
+      display: inline-block;
+      height: 100px;
+      font-size: 12px;
+    }
+    .inline-block .left {
+      background: blue;
+      width: 300px;
+      text-align: center;
+    }
+    .inline-block .center {
+      background: red;
+      width:calc(100% - 600px);
+    }
+    .inline-block .right {
+      width: 300px;
+      background: yellow;
+    }
+
+  </style>
+
+  <style>
+    .flex {
+      display: flex;
+    }
+    .flex div{
+      height: 100px;
+    }
+    .flex .left {
+      width: 300px;
+      background: blue;
+    }
+    .flex .center {
+      flex: 1 1 auto;
+      background: red;
+      vertical-align: middle;
+      text-align: center;
+    }
+    .flex .center:after {
+      content: '12312312';
+      display: inline-block;
+      vertical-align: middle;
+      text-align: center;
+    }
+    .flex .right {
+      width: 300px;
+      background: yellow;
+    }
+  </style>
+
+  <div class="grid">
+    <div class="left">left</div>
+    <div class="center">center</div>
+    <div class="right">right</div>
+  </div>
+  <style>
+    .grid{ 
+      display: grid;
+      grid-template-columns: 300px auto 300px;
+      grid-template-rows: 100px auto 100px;
+    }
+    .grid .left {
+      background: blue;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .grid .center {
+      background: red;
+    }
+    
+    .grid .right {
+      background: yellow;
+    }
+  </style>
+
+</body>
+</html>
+
+
+<!-- 
+  盒模型 
+1. w3c盒模型就是width + padding + border + margin content宽度就是width的值
+2. ie盒模型 width + margin; width包含content + padding + border
+
+box-sizing可以设置盒模型类型
+border-box 就是 ie模型 
+content-box就是标准盒模型
+
+vertical-align: middle; 这个属性只能针对一排行内元素的排列顺序 不能保证行内元素在一个容器的排列位置
+
+
+实现双飞翼布局6中方式
+float position inline-block table flex grid
+
+每个优缺点
+float需要清楚浮动，兼容性好
+绝对定位 快捷 已经脱离文档流了，子级也都脱离了
+flex 解决上面两个问题的
+表格 不需要增加时候会出现问题
+网格布局 新技术 兼容性查，
+铺满全屏 
+中间内容多 左右自适应 flex grid table
+最后方案是什么 
+
+-->
+
+<script>
+  let str =  'abccaccccad'
+  console.log(str.match(/a./g)) // 不加g返回第一个匹配到的字符串信息[0], 加g返回匹配到所有组成的数组，匹配不到返沪null
+  str.replace(/a(.)/g, function(match, p1, offset, string) {
+    consol·e.log(match, p1, offset, string)
+  })
+</script>

@@ -1,3 +1,5 @@
+import { type } from "os";
+
 // call实现
 
 Function.prototype.call1 = function(context, ...args) {
@@ -84,3 +86,82 @@ function f1(a, b) {
 const f2 = f1.call(obj, 1 ,2)
 f2();
 
+
+
+
+// call 
+Function.prototype.myCall = function(context, ...args) {
+    context = typeof context === 'object' ? context : Object(context);
+    context.fn = this;
+    let result = context.fn(...args);
+    delete context.fn;
+    return result;
+}
+
+Function.prototype.call1 = function(context, ...args) {
+    context = context ? Object(context) : global;
+    context.fn = this;
+    const result = context.fn(...args);
+    delete context.fn;
+    return result;
+}
+
+var a = 10
+let obj = {
+    a: 1
+};
+function fn(a) {
+    console.log(this === global, this.a, a)
+    return a;
+}
+console.log(fn.call())
+
+// context 是undefined/null 函数内部的this指向window
+Function.prototype.myCall = function(context, ...args) {
+    context = null == context? window : Object(context)
+    context.fn = this;
+    let result = context.fn(...args);
+    delete context.fn;
+    return result;
+}
+
+Function.prototype.myApply = function(context, args = []) {
+    context = context == null ? window : Object(context);
+    context.fn = this;
+    let result = context.fn(...args);
+    delete context.fn;
+    return result;
+}
+
+// bind  绑定之后返沪一个函数 绑定时传入的参数和调用时传递的参数一样 new之后的对象时原来函数的实例，并且符合函数new时候的规则
+Function.prototype.myBind = function(context, ...args) {
+    context = context == null ? window : Object(context);
+    let _this = this;
+    return function F() {
+        if(this instanceof F) {
+            return new _this(...args, ...arguments);
+        } else {
+            return _this.apply(context, [...args, ...arguments])
+        }
+    }
+}
+
+function fn() {
+
+}
+fn1 = fn.bind(obj, 1231)
+fn1() 
+
+
+
+
+// function fn(...args) {
+//     console.log(args)
+// }
+// fn()
+
+function myNew(fn, ...args) {
+    let obj = Object.create(fn.prototype);
+    let result = fn.call(obj, ...args);
+    return result instanceof Object? result : obj;
+}

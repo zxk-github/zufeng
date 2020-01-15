@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function jsonp({url, params, cb}) {
+      let script = document.createElement('script');
+      params = {...params, cb};
+      let querys = [];
+      Object.keys(params).forEach((key) => {
+        querys.push(`${key}=${params[key]}`)
+      })
+      window[cb] = function(data) {
+        console.log(data)
+        document.body.appendChild(script);
+      }
+      script.src = `${url}?${querys.join('&')}`;
+      document.body.appendChild(script);
+    } 
+
+    jsonp({
+      url: 'http://localhost:3001/data',
+      params: {
+        a: 1,
+        b: 2
+      },
+      cb: 'show'
+    })
+  </script>
+</body>
+</html>

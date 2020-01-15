@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <div id="app">
+    {{fullname}} {{lastname}}
+  </div> 
+  <script>
+    /**
+     * 两者都是基于vm.$watch
+     * computed 会根据其他的值计算返回新的值 
+     * watch 监控 监控某一个值的变化
+     */
+    let vm = new Vue({
+      el: '#app',
+      data: {
+        name: 'zhang',
+        age: 10,
+        checks: [{value: true},{value: true},{value: true}]
+      },
+      computed: {
+        fullname() {
+          console.log('aaaa')
+          this.name = this.name + 1;          
+          return this.name;
+        },
+        lastname() {
+          console.log('bbb')
+          return this.age
+        },
+        checkAll: {
+          get() {
+            return this.checks.every(check => check.value);
+          },
+          set(newValue) {
+            this.checks.forEach(check => {
+              check.value = newValue
+            })
+          }
+        }
+      },
+      mounted() {
+        setTimeout(() => {
+          this.name = 'zhang'
+        }, 5000)
+        setTimeout(() => {
+          this.age = 10
+        }, 1000)
+      },
+      watch: { // 当值发生变化的时候，可以做任何事情
+        name(newValue, oldValue) {
+
+        },
+        age: {
+          handler() {
+
+          },
+          immediate: true, // 立即执行handler
+          deep: true, // 深度监控
+          lazy: true // 就是computed的实现
+        }
+      }
+    })
+
+
+    // computed执行
+    let dirty = true;
+    function initComputed(key, handler) {
+      let value;
+      Object.defineProperty(vm, key, {
+        get() {
+          if(dirty) {
+            value = handler();
+            dirty = false;
+          }
+          return value;
+        }
+      })
+    }
+    initComputed('fullname', () => {
+      console.log('刷新')
+      return vm.name + 'jw'
+    })
+    vm.fullname;
+    vm.fullname;
+    vm.name = 'jw';
+    vm.fullname;
+    /*
+      函数是每次数据更新 视图会重新刷新 然后每次都会执行函数
+    */
+
+  </script>
+</body>
+</html>

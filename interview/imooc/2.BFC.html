@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <section class="layout">
+        <style>
+            .layout {
+                background: red;
+            }
+            .layout .left {
+                float: left;
+                width: 100px;
+                height: 100px;
+                background: black;
+            }
+            .layout .right {
+                height: 200px;
+                background: blue;
+                /* 创建一个BFC */
+                overflow: auto;
+            }
+        </style>
+        <div class="left"></div>
+        <div class="right"></div>
+    </section>
+
+    <!-- 清除浮动 -->
+</body>
+</html>

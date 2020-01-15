@@ -274,11 +274,45 @@ let proxy = new Proxy(obj, { 创建一个代理会返回一个obj的代理对象
 如果代理的是数组，进行数组的操作的时候
 
 
+语法str.replace(regexp|substr, newSubstr|function)
+replace 规则
+0. replace函数执行之后，返回全新的字符串，原字符串不变
+1. 当匹配规则是一个字符串的时候，只会执行一次匹配，第二个参数不传，或者传入函数函数没有返回值，匹配到的内容会被undefined替换
+2. 当第二个参数是一个函数的时候，当匹配到函数就会执行，函数返回值会替换字符串，如果第一个参数是一个正则表达式，并且是全局匹配模式，那么这个方法就会被多次执行，每次匹配都会调用这个函数
 
+let str = 'ddaabbccacad';
+// let str1 = str.replace('a', '$&')
+let str1 = str.replace(/a[a-z]/g, '$1')
+console.log(str1)
+// 特殊字符串 $$ $& $` $' 
+let str = 'ddaabbccacad';
+let str1 = str.replace(/a([a-z])/g, function(match, p, offset, string) {
+    console.log(match, 'match')  匹配到的字符串
+    console.log(p, 'p') 正则表达式()部分匹配到的内容  如果有多个括号，第一个括号下标是1, p1会匹配到
+    console.log(offset, 'offset') 匹配部分字符串的偏移量
+    console.log(string, 'string') 原字符串
+})
+** 如果正则表达式中没有() 那么匹配参数向前移动一位
 
+交换两个单词的顺序
+var re = /(\w+)\s(\w+)/;
+var str = "John Smith";
+var newStr = str.replace(re, "$2, $1");
+console.log(newStr)
 
+用法:str.macth(regexp)
+返回值: 
+如果使用g标志，则将返回与完整正则表达式匹配的所有结果，但不会返回捕获数组
+如果没有使用g, 则将返回第一个匹配及其相关的捕获组
+var str = 'abcdabcdabcdabcdabcd'
+var re = /a(b)(c)/i
+var found = str.match(re);
+console.log(found); //[ 'abc', 'b', 'c', index: 0, input: 'abcdabcdabcdabcdabcd' ]
 
-
+var str = 'abcdabcdabcdabcdabcd'
+var reg = /a(b)(c)/ig;
+var found = str.match(reg);
+console.log(found); // [ 'abc', 'abc', 'abc', 'abc', 'abc' ]
 
 
 

@@ -1,0 +1,31 @@
+HTML常见元素和理解
+HTML版本
+HTML元素分类
+HTML嵌套关系
+HTML默认样式和定制化
+
+HTML常见元素 
+header区: 不会在页面中留下直接的内容
+meta 
+titile
+style
+link 
+script 
+base
+body区
+div/section/article/aside/header/footer
+p
+span/em/strong
+table/thead/tbody/td/tr/th
+ul/li/ol/li/dl/dt/dd
+a
+form/input/select/option/textarea/button
+
+<meta charset="utf-8" /> 页面字符集
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalabel=no" />
+viewport就是手机屏幕代表页面多大尺寸，默认不执行视口宽度，默认视口宽度是980px, 980px直接显示在手机屏幕上就会非常小，所以这时候如果显示宽度和手机屏幕的物理宽度相同就好了
+<base href='/a' />指定基础路径
+href="/aa"   /a//aa
+
+
+

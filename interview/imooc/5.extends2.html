@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 借助原型链实现继承 -->
+    <script>
+        function Parent() {
+            this.name = 'parent';
+            this.play = [1, 2, 3];
+        }
+        function Child() {
+            this.type = 'child'
+        }
+
+        Child.prototype = new Parent();
+
+        var child = new Child();
+
+        console.log(child instanceof Child) // true
+        console.log(child instanceof Parent) // true
+        console.log(child.__proto__ === Child.prototype) // 实际上是判断实例的__proto__和构造函数的原型引用的是不是一个地址
+
+        console.log(child.constructor) // Parent
+        
+        /*
+            child原型链上的原型对象，他们相互公用的，这就导致在父类函数的构造函数中如果有对象类型的属性，会出现共同引用现象
+            子类实例的构造函数指向Parent
+        */
+
+        
+
+    </script>
+</body>
+</html>

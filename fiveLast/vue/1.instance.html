@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <div id="app">{{name}}</div>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      data: {
+        name: 1
+      }
+    })
+    vm.$nextTick(() => {
+      console.log(222);
+    })
+    /**
+     * 1.vue不会只在本轮代码执行完成之前，重新渲染DOM
+     * 2.数据更新的时候，视图不会立刻更新，会在下一个事件环的时候更新(promise.then mutationObserver setImmediate setTimeout)
+     * 3.vue内部的异步队列会在下一个循环的时候，按照callback的先后顺序执行
+     */
+    // 等待数据更新之后，才会执行回调函数，最终数据变化了才会执行回调函数，并且回调函数的执行会在下一个事件环
+    vm.$watch('name', function(newValue, oldValue) {
+      console.log(newValue)
+    }) // 监听数据的变化，监听对象多次变化
+    vm.name = 2;
+    vm.name = 3
+    console.log(vm.$el.innerHTML)  // 1
+    // debugger;
+    vm.$nextTick(() => {
+      console.log(vm.$el.innerHTML) 
+    })
+  </script>
+</body>
+</html>

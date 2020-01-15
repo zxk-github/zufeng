@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+</html>
+
+grid布局就是将网页划分成一个个网格，然后通过网格之间的组合，做出各种布局
+flex布局是通过指定项目在轴线上的排列顺序，达到布局需要
+grid布局是通过将页面划分成列和行，然后在执行单元格中绘制，达到布局要求
+
+采用网格布局的区域，成为容器。每个网格的元素称为项目 
+
+水平是行(row)
+垂直是列(column)
+
+单元格 行和列的交叉区域成为单元格
+网格线 水平网格划分出行(row) 垂直网格划分出列(column)
+
+属性分类
+定义在容器上，称为容器属性
+定义在项目上，称为项目属性
+
+容器属性
+display: grid; 指定一个容器采用网格布局
+默认情况下容器都是块级元素，也可以是display: inline-grid;
+
+网格布局中，子级元素设置float, table-cell, inline-block,vertical-align都将失败
+设置每个列的宽度 grid-template-columns: 100px 100px 200px;
+设置每个行的宽度 grid-template-row: 100px 100px 200px;
+也可以设置相对百分比
+
+关键字 repeat() auto-fill fr minmax() auto
+重复写很麻烦，可以使用repeat()
+grid-template-columns: repeat(2, 100px 300px);
+
+单元格大小固定，但是容器大小不是固定的，这时候需要尽可能多的容纳元素，这时候auto-fill
+grid-template-columns: repeat(auto-fill, 100px)
+
+fr 比例， 剩余空间的比例
+grid-template-columns: 100px 1fr 3fr;
+
+minmax(min, max) 最小值和最大值的一个范围，元素的长度在这个范围之类
+grid-template-columns: 1fr 1fr minmax(100px 1fr);
+
+grid-template-columns: 100px auto 100px; 宽度自适应
+
+布局例子
+两格布局
+.box {
+    display: grid;
+    grid-template-columns: 30% 70%;
+}
+
+传统的12列布局 
+.box {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+}
+
+grid-column-gap 设置列之间的间距
+grid-row-gap: 设置行之间的间距
+grid-gap: <grid-row-gap> <grid-column-gap>
+.container {
+    grid-gap: 20px 20px;
+}
+
+grid-auto-flow 设置排列规则，默认row, 一行排满之后，折行
+grid-auto-flow: column; 现排列，从第一列从上到下，满了之后再来一次
+
+
+
+
+
+
+

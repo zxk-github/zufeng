@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <div id="app" class="app"></div>
+    <script>
+      new Vue({
+        el: '#app',
+        data: {
+          a: 1
+        },
+        beforeCreate() {
+          console.log(this);
+        },
+        create() {
+          console.log(this)
+        },
+        updated() {
+          this.a = Math.random() // 这时候就会触发死循环
+        }
+      })
+    </script>
+</body>
+</html>
+
+
+<!-- 
+vue实例的初始化过程是一个同步的过程，所以定时器，ajax等异步操作不会干扰组件的初始化过程
+
+1. 初始化事件&生命周期
+2. beforCreate
+  a.当前实例父级和子级是哪个 此时可以获取到$parent $children
+  b.内部一套发布订阅事件
+  c.生命周期初始化函数
+  d.添加$refs, $data, $props,$on, $emit等属性，但是现在$refs, $data, $props都没有值
+  c.methods,watch,computed都没有值
+用处：适合增加一些特定属性
+3. 初始化注入
+4. created
+  a.当前组件实例创建完成
+  b.数据劫持，方法，数据都可以获取到了
+  c.不能获取到真实的dom
+5. 挂载
+  vm.$mount() 挂载渲染，如果没有参数，会将DOM保存在内存中，通过vm.$el可以获取到这个DOM元素
+  document.body.appendChild(vm.$el) 将渲染好的元素插入到body中
+  html的模版就是template或者render配置项，当两者都存在的时候，会忽略template
+  挂载过程中，如果没有制定template和render, 会将el外部的html作为模版编译
+  不论是template、render函数，还是el都会统一变成render函数
+6. beforeMount 会调用render方法
+7. render方法执行
+8. mounted 当前组件挂载完成，此时可以获取到vm.$el, vm.$refs
+
+vue的更新方式是组件级别的，组件数据变化的之后，只会异步渲染数据变化的组件，因为是异步渲染，所以数据变化之后，不能立刻获取到真实DOM中的数据变化
+
+组件化好处
+  a.组件复用
+  b.减少不必要的渲染
+  c.多人协作
+
+beforeUpdate 在这里可以累加数据更新，不会导致视图多次更新
+*** 只有数据在视图中使用了，数据变化才会触发组件的视图更新，如果没有使用，不会触发
+
+updated 更新完成 这里面尽量不要更新数据，说不定会触发死循环
+
+9.beforeDestroy 定时器清除，事件绑定清除
+
+10. destroyed 销毁之后
+移除所有的观察者，会把数据移除监听事件，仅仅处理数据监听相关，视图不会发生变化
+vm.$destroy() 销毁组件
+
+
+-->

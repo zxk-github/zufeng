@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <iframe src="http://b.zf.cn:3000/b.html" onload="load()" id="iframe"></iframe>
+  <script>
+    document.domain = 'zf.cn';
+    var iframe = document.getElementById('iframe');
+    function load() {
+      console.log(frame.contentWindow.a);
+    }
+  </script>
+</body>
+</html>

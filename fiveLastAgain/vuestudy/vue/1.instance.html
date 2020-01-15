@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <div id="app">{{name}}</div>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      data() {
+        return {
+          name: 1
+        }
+      }
+    })
+    // vue不会在本轮代码执行完成之前渲染DOM
+    // 数据更新的时候，视图不会立刻更新
+    // vue内部的异步队列，在下一个循环会按照先后顺序依次执行
+    vm.$nextTick(() => {
+      console.log(22)
+    })
+
+
+    // 1.数据变化了才会执行回调函数
+    // 2.数据变化了不会立即执行回调函数，回调函数的执行在下一个事件环
+    // 3.一个实例属性被多次赋值，回调函数不会记录每次变化的值，而是上个事件环的初始值和当前的最终值
+    vm.$watch('name', function(newValue, oldValue) {
+      console.log(newValue, oldValue)
+    })
+    // vm.name = 2;
+
+    // 如果想获取DOM的最新状态，需要在数据变化之后
+    vm.$nextTick(function() {
+      console.log('aa', document.getElementById('app').innerHTML)
+    })
+    
+    
+    vm.name = 3;
+    vm.name = 4;
+    console.log(document.getElementById('app').innerHTML)
+    vm.$nextTick(function() {
+      console.log(document.getElementById('app').innerHTML)
+    })
+  </script>
+</body>
+</html>

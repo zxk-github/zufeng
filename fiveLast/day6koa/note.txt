@@ -1,0 +1,170 @@
+koa espress区别 
+
+koa 简单 就是一个插件系统，洋葱模型，支持async/await 所有功能都必须要安装插件 
+express 大而全， es5语法，内置路由和很多中间件，
+都是去了可以回来，但是express 不支持异步
+
+
+
+设置cookie密钥
+app.keys = 
+ctx.cookies.set({name, value, {sign: true}})
+
+ctx.context 可以给ctx
+
+ctx.on('error', err => {
+  log.error('server err', err)
+})
+
+ctx.req node的request对象
+ctx.res node的response对象
+
+ctx.request koa的request对象
+ctx.response koa的response对象
+
+ctx.state 推荐的命名空间，用于通过中间件传递信息和你的前端视图
+ctx.state.user = await User.find(id)
+
+ctx.app 应用实例的引用
+
+ctx.cookies.get(name, [options]) 通过options获取cookie name
+
+ctx.cookies.set(name, value, [options])
+maxAge 一个数字，表示从Date.now()得到的好秒数
+signed cookie签名
+expires cookie过期的时间点
+path cookies的路径
+domain cookie可用域名
+secure 
+httpOnly 仅服务器可访问
+overwrite 是否覆盖以前设置的同名cookie
+
+ctx.throw(status, [msg])
+ctx.throw(401, 'access_denied', {user})
+
+ctx.respond 可用来写入原始的res，而不是koa的response，但是不能用
+
+request
+ctx.header 获取请求头对象
+ctx.headers 获取请求头
+ctx.method 获取请求方法
+ctx.method = 
+ctx.url 获取请求的url
+ctx.url =
+ctx.originalUrl 获取请求原始Url
+ctx.origin 获取url来源，包括protocal和host http://example.com
+ctx.href 获取完整url  http://example.com/foo/bar?q=1
+ctx.path 获取请求路径
+ctx.path = 
+ctx.query  获取查询参数
+ctx.query = 
+ctx.querystring 获取原始查询字符串
+ctx.querystring = 
+ctx.search 获取原始查询字符串
+ctx.host 获取主机名
+ctx.hostname 获取主机名
+ctx.type 获取Content-Type不包含参数charset   image/png
+ctx.charset 获取请求的字符集 utf-8
+ctx.fresh  检查缓存是否新鲜，基于If-None-Natch/Etag和If-Modified-Since/Last-Modify之间协商缓存
+ctx.stale 和ctx.fresh相反
+ctx.socket
+ctx.protocol 返回请求协议
+ctx.socure 
+ctx.ip 获取请求远程地址
+ctx.ips
+cts.subdomains
+ctx.is()
+ctx.accepts() 给type类型，看是否接收
+ctx.acceptsEncodings() 接收哪种压缩方式，和下面一样
+ctx.acceptsCharsets() 接收哪种编码，传入参数就会判断，不传入参数，就会返回可识别的编码
+ctx.acceptsLanguages()
+ctx.get() 获取请求头字段
+
+reponse
+ctx.header 设置响应头
+ctx.body 
+ctx.body = 设置响应体
+ctx.status 
+ctx.status = 
+ctx.message
+ctx.message = 设置相应的状态消息
+ctx.length 
+ctx.length = 设置content-length的值
+ctx.type 设置Content-Type的值
+ctx.type = 
+ctx.headerSent
+ctx.get() 获取响应头字段
+ctx.has() 检查当前响应头是否有某一个值
+ctx.redirect(url) 重定向 302
+ctx.set(type, value) ctx.set({type: value}) 设置响应头
+ctx.append() 添加响应头
+ctx.remove() 删除响应头
+ctx.lastModified = 这是Last-Modified的值
+ctx.etag = 设置etag的值
+
+
+
+
+
+
+
+
+
+100 "continue"
+101 "switching protocols"
+102 "processing"
+200 "ok"
+201 "created"
+202 "accepted"
+203 "non-authoritative information"
+204 "no content"
+205 "reset content"
+206 "partial content"
+207 "multi-status"
+208 "already reported"
+226 "im used"
+300 "multiple choices"
+301 "moved permanently"
+302 "found"
+303 "see other"
+304 "not modified"
+305 "use proxy"
+307 "temporary redirect"
+308 "permanent redirect"
+400 "bad request"
+401 "unauthorized"
+402 "payment required"
+403 "forbidden"
+404 "not found"
+405 "method not allowed"
+406 "not acceptable"
+407 "proxy authentication required"
+408 "request timeout"
+409 "conflict"
+410 "gone"
+411 "length required"
+412 "precondition failed"
+413 "payload too large"
+414 "uri too long"
+415 "unsupported media type"
+416 "range not satisfiable"
+417 "expectation failed"
+418 "I'm a teapot"
+422 "unprocessable entity"
+423 "locked"
+424 "failed dependency"
+426 "upgrade required"
+428 "precondition required"
+429 "too many requests"
+431 "request header fields too large"
+500 "internal server error"
+501 "not implemented"
+502 "bad gateway"
+503 "service unavailable"
+504 "gateway timeout"
+505 "http version not supported"
+506 "variant also negotiates"
+507 "insufficient storage"
+508 "loop detected"
+510 "not extended"
+511 "network authentication required"

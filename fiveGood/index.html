@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div>
+    <button id="btn">click</button>
+  </div>
+  <script>
+    let throttle = function(fn, delay, debounce) {
+      let current_time;
+      let last_run_time;
+      let timer;
+      let context;
+      let args;
+      let call_fn = function() {
+        fn.call(context, [...args]);
+        last_run_time = +new Date();
+      }
+      return function() {
+        context = this;
+        args = [...arguments];
+        let current_time = +new Date;
+        let canRun = current_time - last_run_time - delay;
+        console.log(current_time, last_run_time, delay, canRun)
+        clearTimeout(timer)
+        if(debounce) {
+          timer = setTimeout(() => {
+            call_fn();
+          }, delay);
+        } else {
+          if(call_fn < 0) {
+            call_fn();
+          } else {
+            timer = setTimeout(() => {
+              call_fn();
+            }, -canRun);
+          }
+        }
+      }
+    }
+
+    let btn = document.getElementById('btn');
+    let fn = throttle(function() {
+      console.log(this, ...arguments);
+    }, 4000,  true)
+    fn();
+    btn.onclick = function() {
+      fn.call(this, 1,2,3)
+    }
+
+
+  </script>
+</body>
+</html>

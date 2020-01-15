@@ -1,0 +1,60 @@
+内部继承了路由系统
+内部继承了一些中间件
+
+中间件去了也能回来，唯一区别就是不支持Promise的等待效果
+
+app.use(function(req, res, next) {
+  console.log(1);
+  next();
+  console.log(2);
+})
+
+next就代表下一个中间件，如果没有next()，那么后面的中间件就不会执行
+
+koa处理错误比较优雅
+express不是很容易
+
+
+express可以决定中间件被哪一个路径走， koa是不具有这个功能的
+
+
+
+express和koa区别汇总
+express
+1. express继承了路由系统以及多级路由，同时库的本身就支持一些中间件功能
+2. express中间件不支持promise, async/await
+3. express错误处理: 错误内容传入next()中，跳过所有的中间件，直接执行函数参数有四个的中间件，捕获错误
+4. express支持定义一个中间件可以被哪些路径开头的访问
+
+koa
+1. kao的中间件支持async/await， 所以可以保证异步中间件的执行顺序
+2. koa中间件不支持路径设置
+
+相同点: 中间件的执行都有回路，可以通过控制next函数是否执行，控制后面的中间件是否执行
+
+** express中间件的规则是开头匹配就行，但是路由的匹配必须是严格匹配，路由中也有next，当一个url匹配多个路由规则的时候，next用来保证时候让下面的执行
+app.use(function(req, res, next) {
+  console.log(1);
+  // next(); 如果这个next不执行，后面的路由不会执行
+  console.log(2)
+})
+
+app.get('/a', function(req, res, next) {
+  console.log(3);
+  next()
+  console.log(4)
+})
+
+koa-bodyparser      bodyparser
+koa-view            express自带模版引擎
+koa-multer          multer
+koa cookie get/set  cookie-parser
+koa-session         express-session
+
+
+express() 函数执行实际上返回的是一个应用的实例
+
+路由可以传递多个回调函数，回调函数会按照中间件的规则执行，顺序依次向下，调用next()才会执行下一个中间件
+
+
+

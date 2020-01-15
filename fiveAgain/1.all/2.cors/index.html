@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div>
+
+
+  </div>
+  <script>
+    function ajax(url) {
+      let hmr = new XMLHttpRequest();
+      document.cookie="name=zxk"
+      hmr.open('PUT', url,true);
+      hmr.withCredentials = true;
+      hmr.setRequestHeader('name', 'zxk')
+      hmr.send();
+      hmr.onreadystatechange = function() {
+        if(hmr.readyState === 4) {
+          if(hmr.status >= 200 && hmr.status < 300 || hmr.status === 304) {
+            comsole.log(hmr.response)
+          }
+        }
+      }
+    }
+    ajax('http://localhost:3003/data')
+    
+  </script>
+</body>
+</html>

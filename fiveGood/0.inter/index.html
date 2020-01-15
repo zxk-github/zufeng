@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div>
+    <button id="btn">click</button>
+  </div>
+  <script>
+    function throttle(fn, timeout = 30) {
+      let canRun = 0;
+      return function() {
+        if(canRun === 1) return;
+          if(canRun === 0) {
+            fn(...arguments);
+          } 
+          canRun = 1;
+          setTimeout(() => {
+            fn(...arguments);
+            canRun = 2;
+          }, timeout)
+      }
+    }
+    let oBtn = document.getElementById('btn');
+    let fn = throttle((...args) => {
+      console.log(...args)
+    }, 4000)
+    oBtn.onclick = function() {
+      fn(1,2,3)
+    }
+  </script>
+</body>
+</html>

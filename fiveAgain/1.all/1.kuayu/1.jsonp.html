@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function jsonp(param) {
+      let {url, params, cb} = param;
+      let arr = [];
+      for(let key in params) {
+        arr.push(`${key}=${params[key]}`);
+      }
+      
+      let script = document.createElement('script');
+      window[cb] = function(arg) {
+        console.log(arg);
+        document.body.removeChild(script);
+      }
+      arr.push(`cb=${cb}`)
+      script.src = `${url}?${arr.join('&')}`;
+      document.body.appendChild(script);
+    }
+    let param = {
+      url: 'http://localhost:3002/data',
+      params: {
+        a: 1,
+        b: 2
+      },
+      cb: 'show'
+    }
+    jsonp(param)
+
+    
+    let hmr = new XMLHttpRequest();
+    const url = 
+    hmr.open('GET', url, true)
+    hmr.send();
+    hmr.onreadystatechange = function() {
+      if(hmr.readyState === 4) {
+        if(hmr.status >= 200 && hmr.status < 300 || hmr.status === 304) {
+
+        }
+      }
+    }
+  </script>
+</body>
+</html>

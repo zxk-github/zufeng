@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function ajax(options) {
+      options.method = options.method || 'GET';
+      options.async = options.async || true;
+      options.timeout = options.timeout || 0;
+      let xhr = new XMLHttpRequest();
+
+      xhr.timeout = options.timeout;
+      let headers = options.headers
+      Object.keys(headers).forEach((header) => {
+        xhr.setRequestHeader(header, headers[header]);
+      })
+      xhr.open(options.method, options.url, options.async)
+      xhr.send();
+      
+      xhr.onreadystatechange = function() {
+        if(xhr.readyState === 4) {
+          if(xhr.status >=200 && xhr.status < 300 || xhr.status === 304) {
+            resolve(xhr.responseText)
+          } else {
+            reject(xhr.responseText)
+          }
+        }
+      }
+      xhr.onerror =  function(err) {
+        reject(err)
+      }
+    }
+
+    ajax({
+      url,
+      method,
+      params,
+      headers
+    }).then(() => {
+
+    }).catch(() => {
+
+    })
+
+    <style></style>
+
+  </script>
+
+</body>
+</html>
+
+
+<script>
+  ajax({
+    method,
+    url,
+    params
+  })
+</script>

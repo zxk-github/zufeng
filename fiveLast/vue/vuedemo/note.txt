@@ -1,0 +1,81 @@
+
+vue
+view 前端页面
+controller 处理前端请求
+model 数据库
+
+在传统的mvc中，除了model和view以外的逻辑都放在了controller中，导致controller逻辑复杂难以维护
+在mvvm中view和model没有直接关系，全部通过viewModel进行交互
+
+声明式
+
+vm.$el 获取渲染之后的真实DOM
+vm.$watch('name', (newValue, oldValue) => {
+
+}) // 监控某一个值的变化
+vm.$data // 当前实例的数据
+vm.$options 当前实例上的配置项
+vm.$set 动态添加属性
+vm.$delete 动态删除属性
+
+v-once 节点只会渲染一次 
+v-html
+v-bind
+v-for
+v-if 
+
+缺陷
+vue methods中所有的this指向实例
+
+vue组件传值的方式
+props emit
+$parent $children
+$attrs $listeners
+provide inject 在各级父组件中暴露一个全局数据，子组件向上逐级查找对应变量(比较混乱，不会在业务代码中使用)
+ref 用在元素上，获取的是当前的dom元素，如果放在组件标签上，获取的是当前组件的实例
+eventbus
+a想和b通信，这时候创建一个c，a可以触发c的事件，b也可以触发c的事件，对应的在a和b中也都可以监听c的事件
+
+$children只读，并且修改$children数组内容，页面不会发生变化，组件的顺序不保证
+父组件 ==> 子组件
+1. props
+2. this.$refs.child.bar = '123'
+3. this.$children[0].bar = '123'
+
+子组件 ==> 父组件
+$emit
+
+兄弟组件通信: 给共同的父级添加事件，然后触发事件
+// brother1
+this.$parent.$on('foo', handle)
+// brother2
+this.$parent.$emit('foo')
+
+template中写递归不灵活
+render函数可以渲染元素
+.vue文件中写render函数之所以没有作用是因为template编译之后，会替换render函数
+render(h) {
+  // h就相当于createElement
+  h('h1', {}, 'hello')
+}
+标签类型 标签属性 标签子组件(多个就是数组)
+
+vuex是什么如何使用 哪种场景使用它
+你是怎么认识vuex的
+vuex的action和mutations区别
+如何解决vuex持久化问题
+
+所有状态都保存在state中，组件从state中获取状态，如果组件想要修改状态，不能直接修改，而是需要commit一个mutations，然后将变化应用在原来状态上，然后状态变化视图更新
+异步接口，可以首先派发一个动作，等异步接口完成之后，派发一个动作，更新数据
+
+Vue.mixin({ 混合内容在Vue中
+
+})
+
+插槽不会管插入的是啥，只会管插入在了哪个位置
+匿名插槽
+// use
+<comp>aaaa</comp>
+
+
+
