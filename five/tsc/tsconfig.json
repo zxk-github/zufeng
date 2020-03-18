@@ -1,0 +1,63 @@
+{
+  "compilerOptions": {
+    /* Basic Options */
+    // "incremental": true,                   /* 启动增量编译, 开启之后第二次会在第一次基础上编译，提高编译速度 */
+    "target": "es5",                          /* 指定编译之后的ECMAScript标准 */
+    "module": "commonjs",                     /* 指定模块代码书写采用的是哪个模块话规范 */
+    // "lib": [],                             /* ts项目中需要引入的库的声明文件 */
+    // "allowJs": true,                       /* 允许编译js文件 */
+    // "checkJs": true,                       /* 允许在js文件中报错 */
+    // "jsx": "preserve",                     /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
+    // "declaration": true,                   /* 生成对应文件类型的.d.ts文件 */
+    // "declarationMap": true,                /* 为每个.d.ts声明文件生成相应的sourcemap */
+    // "sourceMap": true,                     /* 生成.map文件. */
+    // "outFile": "./",                       /* 编译之后生成到一个文件中 */
+    // "outDir": "./",                        /* 按照原始目录结构输出到某一个文件夹中 */
+    // "rootDir": "./",                       /* 指定输入文件的根目录，用--outDir来控制输出的目录结构 */
+    // "composite": true,                     /* 全项目开启增量编译 */
+    // "tsBuildInfoFile": "./",               /* 增量编译文件存储位置 */
+    // "removeComments": true,                /* 移除注释 */
+    // "noEmit": true,                        /* 不需要生成编译文件后 */
+    // "importHelpers": true,                 /* Import emit helpers from 'tslib'. */
+    // "downlevelIteration": true,            /* 当目标是ES5或ES3的时候提供对for-of、扩展运算符和解构赋值完整支持 */
+    // "isolatedModules": true,               /* 每一个编译的文件都转化为单独的模块. */
+
+    /* Strict Type-Checking Options */
+    "strict": true,                           /* 启动所有类型检查 */
+    // "noImplicitAny": true,                 /* 不能有隐式的any类型 */
+    "strictNullChecks": false,              /* 不允许把null、undefined赋值给其他类型的变量 */
+    // "strictFunctionTypes": true,           /* 函数参数类型检查 */
+    // "strictBindCallApply": true,           /* 对函数call, apply, bind参数进行校验 */
+    // "strictPropertyInitialization": true,  /* 检查非unfined的属性在构造函数中是否已经初始化了 */
+    // "noImplicitThis": true,                /* this指向的值不能是any */
+    // "alwaysStrict": true,                  /* 在每个编译生成的js文件头上加入"use strict" */
+
+    /* Additional Checks */
+    // "noUnusedLocals": true,                /* 检查是否没有声明了但是没有使用的变量 */
+    // "noUnusedParameters": true,            /* 声明了没有使用的参数. */
+    // "noImplicitReturns": true,             /* 设置为true之后，函数必须有返回值 */
+    // "noFallthroughCasesInSwitch": true,    /* switch case中必须使用return或break. */
+
+    /* Module Resolution Options */
+    // "moduleResolution": "node",            /* 指定模块的解析策略 node 或者 classic */
+    // "baseUrl": "./",                       /* 在解析非绝对路径模块名的时候的基准路径 */
+    // "paths": {},                           /* 指定某一个模块的解析路径 比如："vue": ["node_modules/vue/dist/vue.min.js"] */
+    // "rootDirs": [],                        /* 项目根目录的列表，可以指定多个根目录，在运行时用来合并内容 */
+    // "typeRoots": [],                       /* 包含类型声明的文件夹列表 */
+    // "types": [],                           /* 用来指定需要包含的模块。只有在这里列出的模块声明，编译的时候才会加载进来 */
+    // "allowSyntheticDefaultImports": true,  /* 当没有默认导出的时候允许默认导入，这个在代码执行的时候没有作用，只是在类型检查的时候生效 */
+    "esModuleInterop": true                   /* 通过导入内容创建命名空间，可以commonjs和es模块中之间切换使用 */
+    // "preserveSymlinks": true,              /* Do not resolve the real path of symlinks. */
+    // "allowUmdGlobalAccess": true,          /* Allow accessing UMD globals from modules. */
+
+    /* Source Map Options */
+    // "sourceRoot": "",                      /* 指定ts文件位置 */
+    // "mapRoot": "",                         /* 指定map存放位置 */
+    // "inlineSourceMap": true,               /* 源文件和sourcemap 文件在同一文件中，而不是把map文件放在一个单独的文件里 */
+    // "inlineSources": true,                 /* 源文件和sourcemap 文件在同一文件中 */
+
+    /* Experimental Options */
+    // "experimentalDecorators": true,        /* 是否使用装饰器语法 */
+    // "emitDecoratorMetadata": true,         /* 是否为装饰器提供元数据支持 */
+  }        //  一个对象数组，指定要引用的项目
+}

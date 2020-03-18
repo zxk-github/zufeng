@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
 import store from './store/index.js';
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.prototype.$dispatch = function(eventName, value) {
   let parent = this.$parent;
@@ -30,6 +32,8 @@ Vue.prototype.$bus = new Vue();
 
 
 Vue.config.productionTip = false
+
+Vue.use(ElementUI);
 
 new Vue({
   store,  // 注入到vue实例中，会在所有的组件中申明一个$store属性

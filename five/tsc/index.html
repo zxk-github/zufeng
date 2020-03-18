@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <button id="btn"> click</button>
+  <script>
+    let btn = document.getElementById('btn');
+  
+    let throttle2 = function(fn, delay = 0, initState) {
+      let last_call_time;
+      let timer = null;
+      let current_time;
+      let context;
+      let args = [];
+      let call_fn = function() {
+        fn.call(context, ...args);
+        last_call_time = +new Date();
+      }
+      return function() {
+        context = this;
+        args = [...arguments];
+        current_time = +new Date(); // 当前点击时间
+        // 第一次没有last_call_time，所以返回的值是NaN，所以下面判断依旧是false
+        // 最后一次执行之后，再过delay的时间，用户没有操作，会恢复状态，因为此时canRun的值会比较大
+        let canRun = current_time - last_call_time - delay; 
+        console.log(current_time, last_call_time, delay, canRun)
+        clearTimeout(timer);
+        if(canRun < 0) {  //说明还没有到执行时间点
+          timer = setTimeout(function() {
+            call_fn(); // 防止在中间段，然后用户不点了，防止数据丢失
+          }, -canRun)
+        } else {  //已经到了执行时间点，可以执行
+          call_fn()
+        }
+      }
+    }
+
+    let fn = throttle2(function() {
+      console.log(this, ...arguments)
+    }, 1000)
+    btn.onclick = function() {
+      fn.call(this, 1,2,3)
+    }   
+  </script>
+</body>
+</html>

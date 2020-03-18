@@ -7,6 +7,12 @@ let str = "<ul><li>${name} ${age}</li></ul>";
 // /\$\{(.+?)\}/
 // /\$\{([^}]+)\}/
 
+let str = "from=reg&a=1&b=2";
+str.replace(/(.+?)=(.+?)/g, function(str, p1, p2) {
+  console.log(p1, p2)
+})
+
+
 let result = str.replace(/\$\{(.+?)\}/g, function() {
   // match p1 p2 offset string
   return eval(arguments[1])
